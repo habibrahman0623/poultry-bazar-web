@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
 <title>Poultry BAZAR — Admin</title>
 <link rel="icon" href="../logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
+    color-scheme: light;
     --green: #1a7a3d;
     --green-dark: #125c2c;
     --green-bg: #eaf6ee;
@@ -240,7 +242,7 @@
   <main>
     <!-- ---------- Overview ---------- -->
     <section class="panel active" id="panel-overview">
-      <div id="overviewContent" class="loading">লোড হচ্ছে…</div>
+      <div id="overviewContent"><div class="loading">লোড হচ্ছে…</div></div>
     </section>
 
     <!-- ---------- Ads ---------- -->
@@ -256,7 +258,7 @@
         </select>
         <button class="btn btn-outline btn-small" id="adsSearchBtn">খুঁজুন</button>
       </div>
-      <div id="adsContent" class="loading">লোড হচ্ছে…</div>
+      <div id="adsContent"><div class="loading">লোড হচ্ছে…</div></div>
       <div class="pager" id="adsPager"></div>
     </section>
 
@@ -279,7 +281,7 @@
         </select>
         <button class="btn btn-outline btn-small" id="usersSearchBtn">খুঁজুন</button>
       </div>
-      <div id="usersContent" class="loading">লোড হচ্ছে…</div>
+      <div id="usersContent"><div class="loading">লোড হচ্ছে…</div></div>
       <div class="pager" id="usersPager"></div>
     </section>
 
@@ -293,7 +295,7 @@
         </select>
         <button class="btn btn-outline btn-small" id="reportsSearchBtn">খুঁজুন</button>
       </div>
-      <div id="reportsContent" class="loading">লোড হচ্ছে…</div>
+      <div id="reportsContent"><div class="loading">লোড হচ্ছে…</div></div>
       <div class="pager" id="reportsPager"></div>
     </section>
 
@@ -303,7 +305,7 @@
         <input type="file" id="bannerFileInput" accept="image/jpeg,image/png,image/webp">
         <button class="btn btn-primary btn-small" id="addBannerBtn">আপলোড করুন</button>
       </div>
-      <div id="bannersContent" class="loading">লোড হচ্ছে…</div>
+      <div id="bannersContent"><div class="loading">লোড হচ্ছে…</div></div>
     </section>
 
     <!-- ---------- Notices ---------- -->
@@ -311,13 +313,13 @@
       <div class="toolbar">
         <button class="btn btn-primary btn-small" id="addNoticeBtn">+ নতুন নোটিশ</button>
       </div>
-      <div id="noticesContent" class="loading">লোড হচ্ছে…</div>
+      <div id="noticesContent"><div class="loading">লোড হচ্ছে…</div></div>
     </section>
 
     <!-- ---------- Contact ---------- -->
     <section class="panel" id="panel-contact">
       <div class="card" style="max-width:480px;">
-        <div id="contactForm" class="loading">লোড হচ্ছে…</div>
+        <div id="contactForm"><div class="loading">লোড হচ্ছে…</div></div>
       </div>
     </section>
 
@@ -327,7 +329,7 @@
         <button class="btn btn-outline btn-small feedback-subtab active" data-replied="false">অমীমাংসিত</button>
         <button class="btn btn-outline btn-small feedback-subtab" data-replied="true">রিপ্লাই দেওয়া</button>
       </div>
-      <div id="feedbackContent" class="loading">লোড হচ্ছে…</div>
+      <div id="feedbackContent"><div class="loading">লোড হচ্ছে…</div></div>
       <div class="pager" id="feedbackPager"></div>
     </section>
   </main>
