@@ -229,6 +229,10 @@
       <button data-tab="categories">ক্যাটাগরি</button>
       <button data-tab="users">ব্যবহারকারী</button>
       <button data-tab="reports">রিপোর্ট</button>
+      <button data-tab="banners">ব্যানার</button>
+      <button data-tab="notices">নোটিশ</button>
+      <button data-tab="contact">যোগাযোগ</button>
+      <button data-tab="feedback">ফিডব্যাক</button>
     </nav>
     <button class="btn btn-outline btn-small" id="logoutBtn">লগআউট</button>
   </header>
@@ -292,7 +296,67 @@
       <div id="reportsContent" class="loading">লোড হচ্ছে…</div>
       <div class="pager" id="reportsPager"></div>
     </section>
+
+    <!-- ---------- Banners ---------- -->
+    <section class="panel" id="panel-banners">
+      <div class="toolbar">
+        <input type="file" id="bannerFileInput" accept="image/jpeg,image/png,image/webp">
+        <button class="btn btn-primary btn-small" id="addBannerBtn">আপলোড করুন</button>
+      </div>
+      <div id="bannersContent" class="loading">লোড হচ্ছে…</div>
+    </section>
+
+    <!-- ---------- Notices ---------- -->
+    <section class="panel" id="panel-notices">
+      <div class="toolbar">
+        <button class="btn btn-primary btn-small" id="addNoticeBtn">+ নতুন নোটিশ</button>
+      </div>
+      <div id="noticesContent" class="loading">লোড হচ্ছে…</div>
+    </section>
+
+    <!-- ---------- Contact ---------- -->
+    <section class="panel" id="panel-contact">
+      <div class="card" style="max-width:480px;">
+        <div id="contactForm" class="loading">লোড হচ্ছে…</div>
+      </div>
+    </section>
+
+    <!-- ---------- Feedback ---------- -->
+    <section class="panel" id="panel-feedback">
+      <div class="toolbar">
+        <button class="btn btn-outline btn-small feedback-subtab active" data-replied="false">অমীমাংসিত</button>
+        <button class="btn btn-outline btn-small feedback-subtab" data-replied="true">রিপ্লাই দেওয়া</button>
+      </div>
+      <div id="feedbackContent" class="loading">লোড হচ্ছে…</div>
+      <div class="pager" id="feedbackPager"></div>
+    </section>
   </main>
+</div>
+
+<!-- ---------- Notice modal ---------- -->
+<div class="modal-overlay" id="noticeModalOverlay">
+  <div class="modal">
+    <h3 id="noticeModalTitle">নতুন নোটিশ</h3>
+    <form id="noticeForm">
+      <div class="field">
+        <label>বার্তা</label>
+        <textarea id="noticeMessage" required maxlength="500" rows="3" style="width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:10px;outline:none;font-family:inherit;"></textarea>
+      </div>
+      <div class="field">
+        <label>মেয়াদ শেষ হবে (ঐচ্ছিক)</label>
+        <input type="date" id="noticeExpiresAt">
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="noticeActive" checked>
+        <label for="noticeActive">সক্রিয় (Active)</label>
+      </div>
+      <div id="noticeModalError"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline btn-small" id="noticeModalCancel">বাতিল</button>
+        <button type="submit" class="btn btn-primary btn-small">সেভ করুন</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <!-- ---------- Category modal ---------- -->
@@ -475,6 +539,10 @@ document.getElementById('tabs').addEventListener('click', (e) => {
   if (btn.dataset.tab === 'categories' && !categoriesLoaded) loadCategories();
   if (btn.dataset.tab === 'users' && !usersLoaded) loadUsers();
   if (btn.dataset.tab === 'reports' && !reportsLoaded) loadReports();
+  if (btn.dataset.tab === 'banners' && !bannersLoaded) loadBanners();
+  if (btn.dataset.tab === 'notices' && !noticesLoaded) loadNotices();
+  if (btn.dataset.tab === 'contact' && !contactLoaded) loadContact();
+  if (btn.dataset.tab === 'feedback' && !feedbackLoaded) loadFeedback();
 });
 
 // ---------------- Overview ----------------
@@ -552,24 +620,29 @@ async function loadAds(page) {
     adsLoaded = true;
     let html = '<div class="card"><div class="table-wrap"><table><thead><tr><th>কোড</th><th>ক্যাটাগরি</th><th>জেলা</th><th>মুরগী</th><th>Status</th><th>প্রকাশ</th><th>একশন</th></tr></thead><tbody>';
     for (const ad of res.items) {
-      html += `<tr>
-        <td>${escapeHtml(ad.adCode)}</td>
-        <td>${escapeHtml((ad.subcategory || ad.category || {}).name || '')}</td>
-        <td>${escapeHtml((ad.location && ad.location.district && ad.location.district.name) || '')}</td>
-        <td>${ad.birdCount ?? ''}</td>
-        <td><span class="badge ${ad.status}">${ad.status}</span></td>
-        <td>${fmtDate(ad.publishedAt)}</td>
-        <td class="action-cell">
-          <select class="status-select" data-code="${escapeHtml(ad.adCode)}">
-            <option value="">status বদলান</option>
-            <option value="ACTIVE">ACTIVE</option>
-            <option value="SOLD">SOLD</option>
-            <option value="EXPIRED">EXPIRED</option>
-            <option value="DELETED">DELETED</option>
-          </select>
-          <button class="btn btn-danger btn-small" data-del="${escapeHtml(ad.adCode)}">ডিলিট</button>
-        </td>
-      </tr>`;
+      try {
+        html += `<tr>
+          <td>${escapeHtml(ad.adCode)}</td>
+          <td>${escapeHtml((ad.subcategory || ad.category || {}).name || '')}</td>
+          <td>${escapeHtml((ad.location && ad.location.district && ad.location.district.name) || '')}</td>
+          <td>${ad.birdCount ?? ''}</td>
+          <td><span class="badge ${ad.status}">${ad.status}</span></td>
+          <td>${fmtDate(ad.publishedAt)}</td>
+          <td class="action-cell">
+            <select class="status-select" data-code="${escapeHtml(ad.adCode)}">
+              <option value="">status বদলান</option>
+              <option value="ACTIVE">ACTIVE</option>
+              <option value="SOLD">SOLD</option>
+              <option value="EXPIRED">EXPIRED</option>
+              <option value="DELETED">DELETED</option>
+            </select>
+            <button class="btn btn-danger btn-small" data-del="${escapeHtml(ad.adCode)}">ডিলিট</button>
+          </td>
+        </tr>`;
+      } catch (rowErr) {
+        console.error('ad row render failed', ad, rowErr);
+        html += `<tr><td colspan="7">রো রেন্ডার করা যায়নি: ${escapeHtml(rowErr.message)}</td></tr>`;
+      }
     }
     html += '</tbody></table></div></div>';
     if (!res.items.length) html = '<div class="card"><div class="empty">কোনো বিজ্ঞাপন পাওয়া যায়নি</div></div>';
@@ -830,6 +903,261 @@ async function loadReports(page) {
   }
 }
 document.getElementById('reportsSearchBtn').addEventListener('click', () => loadReports(0));
+
+// ---------------- Media upload (shared by banners) ----------------
+async function uploadImageFile(file) {
+  const presigned = await apiFetch('/media/presign', {
+    method: 'POST',
+    body: JSON.stringify({ files: [{ fileName: file.name, contentType: file.type, sizeBytes: file.size }] }),
+  });
+  const target = presigned[0];
+  await fetch(target.uploadUrl, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
+  return target.objectKey;
+}
+
+// ---------------- Banners ----------------
+let bannersLoaded = false;
+async function loadBanners() {
+  const el = document.getElementById('bannersContent');
+  el.innerHTML = '<div class="loading">লোড হচ্ছে…</div>';
+  try {
+    const banners = await apiFetch('/admin/banners');
+    bannersLoaded = true;
+    if (!banners.length) { el.innerHTML = '<div class="card"><div class="empty">কোনো ব্যানার নেই</div></div>'; return; }
+    let html = '<div class="grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;">';
+    for (const b of banners) {
+      html += `<div class="card">
+        <img src="${escapeHtml(b.imageUrl)}" alt="" style="width:100%;border-radius:8px;margin-bottom:10px;display:block;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;">
+            <input type="checkbox" data-active="${b.id}" ${b.active ? 'checked' : ''}> সক্রিয়
+          </label>
+          <input type="number" data-order="${b.id}" value="${b.sortOrder}" style="width:64px;padding:5px 7px;border:1px solid var(--border);border-radius:7px;" title="Sort order">
+        </div>
+        <button class="btn btn-danger btn-small" data-delbanner="${b.id}" style="width:100%;">ডিলিট</button>
+      </div>`;
+    }
+    html += '</div>';
+    el.innerHTML = html;
+
+    el.querySelectorAll('[data-active]').forEach(cb => {
+      cb.addEventListener('change', async () => {
+        try {
+          await apiFetch(`/admin/banners/${cb.dataset.active}`, { method: 'PATCH', body: JSON.stringify({ active: cb.checked }) });
+          toast('আপডেট হয়েছে');
+        } catch (err) { toast(err.message, true); cb.checked = !cb.checked; }
+      });
+    });
+    el.querySelectorAll('[data-order]').forEach(inp => {
+      inp.addEventListener('change', async () => {
+        try {
+          await apiFetch(`/admin/banners/${inp.dataset.order}`, { method: 'PATCH', body: JSON.stringify({ sortOrder: parseInt(inp.value, 10) }) });
+          toast('আপডেট হয়েছে');
+        } catch (err) { toast(err.message, true); }
+      });
+    });
+    el.querySelectorAll('[data-delbanner]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('এই ব্যানারটি ডিলিট করবেন?')) return;
+        try {
+          await apiFetch(`/admin/banners/${btn.dataset.delbanner}`, { method: 'DELETE' });
+          toast('ব্যানার ডিলিট হয়েছে');
+          loadBanners();
+        } catch (err) { toast(err.message, true); }
+      });
+    });
+  } catch (err) {
+    el.innerHTML = '<div class="error-box">' + escapeHtml(err.message) + '</div>';
+  }
+}
+document.getElementById('addBannerBtn').addEventListener('click', async () => {
+  const input = document.getElementById('bannerFileInput');
+  const file = input.files[0];
+  if (!file) { toast('ছবি নির্বাচন করুন', true); return; }
+  try {
+    const objectKey = await uploadImageFile(file);
+    await apiFetch('/admin/banners', { method: 'POST', body: JSON.stringify({ objectKey }) });
+    toast('ব্যানার যোগ হয়েছে');
+    input.value = '';
+    loadBanners();
+  } catch (err) { toast(err.message, true); }
+});
+
+// ---------------- Notices ----------------
+let noticesLoaded = false;
+let noticesCache = [];
+async function loadNotices() {
+  const el = document.getElementById('noticesContent');
+  el.innerHTML = '<div class="loading">লোড হচ্ছে…</div>';
+  try {
+    const notices = await apiFetch('/admin/notices');
+    noticesLoaded = true;
+    noticesCache = notices;
+    if (!notices.length) { el.innerHTML = '<div class="card"><div class="empty">কোনো নোটিশ নেই</div></div>'; return; }
+    let html = '<div class="card"><div class="table-wrap"><table><thead><tr><th>বার্তা</th><th>Status</th><th>মেয়াদ</th><th>একশন</th></tr></thead><tbody>';
+    for (const n of notices) {
+      html += `<tr>
+        <td>${escapeHtml(n.message)}</td>
+        <td><span class="badge ${!n.active}">${n.active ? 'Active' : 'Inactive'}</span></td>
+        <td>${n.expiresAt ? fmtDate(n.expiresAt) : '—'}</td>
+        <td class="action-cell">
+          <button class="btn btn-outline btn-small" data-editnotice="${n.id}">Edit</button>
+          <button class="btn btn-danger btn-small" data-delnotice="${n.id}">Delete</button>
+        </td>
+      </tr>`;
+    }
+    html += '</tbody></table></div></div>';
+    el.innerHTML = html;
+
+    el.querySelectorAll('[data-editnotice]').forEach(btn => {
+      btn.addEventListener('click', () => openNoticeModal(noticesCache.find(n => n.id == btn.dataset.editnotice)));
+    });
+    el.querySelectorAll('[data-delnotice]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('এই নোটিশটি ডিলিট করবেন?')) return;
+        try {
+          await apiFetch(`/admin/notices/${btn.dataset.delnotice}`, { method: 'DELETE' });
+          toast('নোটিশ ডিলিট হয়েছে');
+          loadNotices();
+        } catch (err) { toast(err.message, true); }
+      });
+    });
+  } catch (err) {
+    el.innerHTML = '<div class="error-box">' + escapeHtml(err.message) + '</div>';
+  }
+}
+
+let editingNoticeId = null;
+function openNoticeModal(existing) {
+  editingNoticeId = existing ? existing.id : null;
+  document.getElementById('noticeModalTitle').textContent = existing ? 'নোটিশ এডিট করুন' : 'নতুন নোটিশ';
+  document.getElementById('noticeMessage').value = existing ? existing.message : '';
+  document.getElementById('noticeExpiresAt').value = existing && existing.expiresAt ? existing.expiresAt.slice(0, 10) : '';
+  document.getElementById('noticeActive').checked = existing ? !!existing.active : true;
+  document.getElementById('noticeModalError').innerHTML = '';
+  document.getElementById('noticeModalOverlay').classList.add('open');
+}
+document.getElementById('addNoticeBtn').addEventListener('click', () => openNoticeModal(null));
+document.getElementById('noticeModalCancel').addEventListener('click', () => {
+  document.getElementById('noticeModalOverlay').classList.remove('open');
+});
+document.getElementById('noticeForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const errBox = document.getElementById('noticeModalError');
+  errBox.innerHTML = '';
+  const dateVal = document.getElementById('noticeExpiresAt').value;
+  const body = {
+    message: document.getElementById('noticeMessage').value.trim(),
+    active: document.getElementById('noticeActive').checked,
+  };
+  if (editingNoticeId) {
+    if (dateVal) body.expiresAt = dateVal + 'T23:59:00'; else body.clearExpiry = true;
+  } else {
+    if (dateVal) body.expiresAt = dateVal + 'T23:59:00';
+  }
+  try {
+    if (editingNoticeId) {
+      await apiFetch(`/admin/notices/${editingNoticeId}`, { method: 'PATCH', body: JSON.stringify(body) });
+    } else {
+      await apiFetch('/admin/notices', { method: 'POST', body: JSON.stringify(body) });
+    }
+    toast('সেভ হয়েছে');
+    document.getElementById('noticeModalOverlay').classList.remove('open');
+    loadNotices();
+  } catch (err) {
+    errBox.innerHTML = '<div class="error-box">' + escapeHtml(err.message) + '</div>';
+  }
+});
+
+// ---------------- Contact ----------------
+let contactLoaded = false;
+const CONTACT_FIELDS = [
+  ['phone', 'ফোন নম্বর'], ['whatsappNumber', 'হোয়াটসঅ্যাপ নম্বর'], ['whatsappMessage', 'হোয়াটসঅ্যাপ বার্তা'],
+  ['email', 'ইমেইল'], ['address', 'ঠিকানা'], ['mapUrl', 'ম্যাপ লিংক'], ['facebookUrl', 'ফেসবুক লিংক'],
+];
+async function loadContact() {
+  const el = document.getElementById('contactForm');
+  el.innerHTML = '<div class="loading">লোড হচ্ছে…</div>';
+  try {
+    const c = await apiFetch('/admin/contact');
+    contactLoaded = true;
+    let html = '<form id="contactFormEl">';
+    for (const [key, label] of CONTACT_FIELDS) {
+      html += `<div class="field"><label>${label}</label><input type="text" id="contact_${key}" value="${escapeHtml(c[key] || '')}"></div>`;
+    }
+    html += '<button type="submit" class="btn btn-primary btn-small">সেভ করুন</button></form><div id="contactError"></div>';
+    el.innerHTML = html;
+    document.getElementById('contactFormEl').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const body = {};
+      for (const [key] of CONTACT_FIELDS) body[key] = document.getElementById('contact_' + key).value.trim();
+      try {
+        await apiFetch('/admin/contact', { method: 'PUT', body: JSON.stringify(body) });
+        toast('যোগাযোগ তথ্য সেভ হয়েছে');
+      } catch (err) {
+        document.getElementById('contactError').innerHTML = '<div class="error-box">' + escapeHtml(err.message) + '</div>';
+      }
+    });
+  } catch (err) {
+    el.innerHTML = '<div class="error-box">' + escapeHtml(err.message) + '</div>';
+  }
+}
+
+// ---------------- Feedback ----------------
+let feedbackLoaded = false;
+let feedbackPage = 0;
+let feedbackReplied = false;
+async function loadFeedback(page) {
+  feedbackPage = page ?? 0;
+  const el = document.getElementById('feedbackContent');
+  el.innerHTML = '<div class="loading">লোড হচ্ছে…</div>';
+  try {
+    const res = await apiFetch(`/admin/feedback?replied=${feedbackReplied}&page=${feedbackPage}&size=20`);
+    feedbackLoaded = true;
+    if (!res.items.length) { el.innerHTML = '<div class="card"><div class="empty">কোনো ফিডব্যাক নেই</div></div>'; renderPager('feedbackPager', res.page, loadFeedback); return; }
+    let html = '';
+    for (const f of res.items) {
+      const author = f.anonymous ? 'অজ্ঞাতনামা' : `${escapeHtml(f.authorName || '')} (${escapeHtml(f.authorMobile || '')})`;
+      html += `<div class="card" style="margin-bottom:12px;">
+        <div style="font-size:12.5px;color:var(--muted);margin-bottom:6px;">${author} · ${fmtDate(f.createdAt)}</div>
+        <div style="margin-bottom:10px;">${escapeHtml(f.message)}</div>
+        ${f.adminReply
+          ? `<div style="background:var(--green-bg);border-radius:10px;padding:10px 12px;font-size:13.5px;"><b>আপনার রিপ্লাই</b> (${fmtDate(f.repliedAt)}):<br>${escapeHtml(f.adminReply)}</div>`
+          : (f.anonymous
+              ? '<div class="empty" style="padding:6px 0;">অজ্ঞাতনামা ফিডব্যাকে রিপ্লাই করা যায় না</div>'
+              : `<div style="display:flex;gap:8px;">
+                  <input type="text" data-reply-input="${f.id}" placeholder="রিপ্লাই লিখুন" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:8px;">
+                  <button class="btn btn-primary btn-small" data-reply-send="${f.id}">পাঠান</button>
+                </div>`)}
+      </div>`;
+    }
+    el.innerHTML = html;
+    el.querySelectorAll('[data-reply-send]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.replySend;
+        const input = el.querySelector(`[data-reply-input="${id}"]`);
+        const reply = input.value.trim();
+        if (!reply) { toast('রিপ্লাই লিখুন', true); return; }
+        try {
+          await apiFetch(`/admin/feedback/${id}/reply`, { method: 'POST', body: JSON.stringify({ reply }) });
+          toast('রিপ্লাই পাঠানো হয়েছে');
+          loadFeedback(feedbackPage);
+        } catch (err) { toast(err.message, true); }
+      });
+    });
+    renderPager('feedbackPager', res.page, loadFeedback);
+  } catch (err) {
+    el.innerHTML = '<div class="error-box">' + escapeHtml(err.message) + '</div>';
+  }
+}
+document.querySelectorAll('.feedback-subtab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.feedback-subtab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    feedbackReplied = btn.dataset.replied === 'true';
+    loadFeedback(0);
+  });
+});
 
 // ---------------- Boot ----------------
 if (tokens.access) { goToApp(); } else { goToLogin(); }
