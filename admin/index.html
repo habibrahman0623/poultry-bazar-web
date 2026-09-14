@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poultry BAZAR — Admin</title>
+<link rel="icon" href="../logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1a7a3d;
+    --green-dark: #125c2c;
+    --green-bg: #eaf6ee;
+    --red: #c0392b;
+    --red-bg: #fdecea;
+    --amber: #b8860b;
+    --amber-bg: #fdf3d9;
+    --bg: #f5f6f4;
+    --card: #ffffff;
+    --text: #1f2a24;
+    --muted: #667169;
+    --border: #e2e5e0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  button, input, select { font-family: inherit; font-size: 14px; }
+  a { color: var(--green-dark); }
+
+  /* ---------- Login ---------- */
+  #loginScreen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .login-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px 32px;
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+  }
+  .login-card img { width: 64px; height: 64px; border-radius: 14px; margin-bottom: 12px; }
+  .login-card h1 { font-size: 19px; margin: 0 0 4px; }
+  .login-card p.sub { color: var(--muted); font-size: 13px; margin: 0 0 22px; }
+  .field { text-align: left; margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 5px; }
+  .field input {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+  }
+  .field input:focus { border-color: var(--green); }
+  .btn {
+    border: none;
+    border-radius: 10px;
+    padding: 11px 18px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .btn-primary { background: var(--green); color: #fff; width: 100%; }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-primary:disabled { opacity: .6; cursor: default; }
+  .btn-outline { background: #fff; border: 1px solid var(--border); color: var(--text); }
+  .btn-outline:hover { background: #f0f1ee; }
+  .btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid #f3c7c1; }
+  .btn-danger:hover { background: #fbdbd6; }
+  .btn-small { padding: 6px 12px; font-size: 12.5px; border-radius: 8px; }
+  .error-box {
+    background: var(--red-bg);
+    color: var(--red);
+    border: 1px solid #f3c7c1;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    text-align: left;
+  }
+
+  /* ---------- App shell ---------- */
+  #app { display: none; }
+  header.topbar {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; padding: 12px 0; font-weight: 700; }
+  .brand img { height: 30px; width: 30px; border-radius: 7px; }
+  nav.tabs { display: flex; gap: 4px; overflow-x: auto; }
+  nav.tabs button {
+    background: none;
+    border: none;
+    padding: 16px 14px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    font-size: 14px;
+  }
+  nav.tabs button.active { color: var(--green-dark); border-bottom-color: var(--green); }
+  main { max-width: 1180px; margin: 0 auto; padding: 24px 20px 60px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  h2.section-title { font-size: 18px; margin: 0 0 16px; }
+
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 22px; }
+  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+  .stat-card .n { font-size: 22px; font-weight: 700; }
+  .stat-card .l { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+  .chart-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 22px; }
+  @media (max-width: 860px) { .chart-row { grid-template-columns: 1fr; } }
+  .bars { display: flex; align-items: flex-end; gap: 2px; height: 110px; }
+  .bars .bar { flex: 1; background: var(--green); border-radius: 3px 3px 0 0; min-height: 2px; position: relative; }
+  .bars.amber .bar { background: var(--amber); }
+  .bar-labels { display: flex; gap: 2px; margin-top: 4px; font-size: 10px; color: var(--muted); }
+  .bar-labels span { flex: 1; text-align: center; }
+  .toplist div.row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+  .toplist div.row:last-child { border-bottom: none; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 10px 10px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: .02em; }
+  tr:hover td { background: #fafbf9; }
+  .table-wrap { overflow-x: auto; }
+
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+  .badge.ACTIVE { background: var(--green-bg); color: var(--green-dark); }
+  .badge.SOLD { background: var(--amber-bg); color: var(--amber); }
+  .badge.EXPIRED { background: #eee; color: #777; }
+  .badge.DELETED { background: var(--red-bg); color: var(--red); }
+  .badge.SUSPENDED { background: var(--red-bg); color: var(--red); }
+  .badge.true { background: var(--red-bg); color: var(--red); }
+  .badge.false { background: var(--green-bg); color: var(--green-dark); }
+
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+  .toolbar input, .toolbar select {
+    padding: 9px 11px; border: 1px solid var(--border); border-radius: 9px; outline: none;
+  }
+  .toolbar input:focus, .toolbar select:focus { border-color: var(--green); }
+  .pager { display: flex; gap: 8px; align-items: center; margin-top: 14px; font-size: 13px; color: var(--muted); }
+
+  .action-cell { display: flex; gap: 6px; flex-wrap: wrap; }
+  select.status-select { padding: 5px 8px; border-radius: 7px; border: 1px solid var(--border); font-size: 12.5px; }
+
+  .cat-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .cat-row.child { padding-left: 28px; }
+  .cat-row .name { flex: 1; font-weight: 600; }
+  .cat-row .code { font-size: 12px; color: var(--muted); background: #f0f1ee; padding: 2px 8px; border-radius: 6px; }
+
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(20,30,25,.45);
+    display: none; align-items: center; justify-content: center; z-index: 100; padding: 16px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: 16px; padding: 24px; width: 100%; max-width: 420px;
+    max-height: 90vh; overflow-y: auto;
+  }
+  .modal h3 { margin: 0 0 16px; font-size: 17px; }
+  .modal .field { margin-bottom: 12px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--text); color: #fff; padding: 11px 20px; border-radius: 10px;
+    font-size: 13.5px; z-index: 200; opacity: 0; transition: opacity .25s; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+  .toast.err { background: var(--red); }
+
+  .loading { text-align: center; padding: 30px; color: var(--muted); font-size: 13.5px; }
+  .empty { text-align: center; padding: 30px; color: var(--muted); font-size: 13.5px; }
+  .checkbox-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .checkbox-row input { width: auto; }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <img src="../logo.png" alt="Poultry BAZAR">
+    <h1>Poultry BAZAR Admin</h1>
+    <p class="sub">শুধুমাত্র অ্যাডমিন অ্যাকাউন্ট দিয়ে প্রবেশ করুন</p>
+    <div id="loginError"></div>
+    <form id="loginForm">
+      <div class="field">
+        <label>মোবাইল নম্বর</label>
+        <input type="text" id="loginMobile" placeholder="01XXXXXXXXX" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label>পাসওয়ার্ড</label>
+        <input type="password" id="loginPassword" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary" id="loginBtn">লগইন করুন</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+  <header class="topbar">
+    <div class="brand"><img src="../logo.png" alt=""> Admin</div>
+    <nav class="tabs" id="tabs">
+      <button data-tab="overview" class="active">ওভারভিউ</button>
+      <button data-tab="ads">বিজ্ঞাপন</button>
+      <button data-tab="categories">ক্যাটাগরি</button>
+      <button data-tab="users">ব্যবহারকারী</button>
+      <button data-tab="reports">রিপোর্ট</button>
+    </nav>
+    <button class="btn btn-outline btn-small" id="logoutBtn">লগআউট</button>
+  </header>
+
+  <main>
+    <!-- ---------- Overview ---------- -->
+    <section class="panel active" id="panel-overview">
+      <div id="overviewContent" class="loading">লোড হচ্ছে…</div>
+    </section>
+
+    <!-- ---------- Ads ---------- -->
+    <section class="panel" id="panel-ads">
+      <div class="toolbar">
+        <input type="text" id="adsSearch" placeholder="বিজ্ঞাপন কোড খুঁজুন">
+        <select id="adsStatusFilter">
+          <option value="">সব status</option>
+          <option value="ACTIVE">ACTIVE</option>
+          <option value="SOLD">SOLD</option>
+          <option value="EXPIRED">EXPIRED</option>
+          <option value="DELETED">DELETED</option>
+        </select>
+        <button class="btn btn-outline btn-small" id="adsSearchBtn">খুঁজুন</button>
+      </div>
+      <div id="adsContent" class="loading">লোড হচ্ছে…</div>
+      <div class="pager" id="adsPager"></div>
+    </section>
+
+    <!-- ---------- Categories ---------- -->
+    <section class="panel" id="panel-categories">
+      <div class="toolbar">
+        <button class="btn btn-primary btn-small" id="addCategoryBtn">+ নতুন ক্যাটাগরি</button>
+      </div>
+      <div class="card" id="categoriesContent"><div class="loading">লোড হচ্ছে…</div></div>
+    </section>
+
+    <!-- ---------- Users ---------- -->
+    <section class="panel" id="panel-users">
+      <div class="toolbar">
+        <input type="text" id="usersSearch" placeholder="নাম বা মোবাইল নম্বর">
+        <select id="usersStatusFilter">
+          <option value="">সব status</option>
+          <option value="ACTIVE">ACTIVE</option>
+          <option value="SUSPENDED">SUSPENDED</option>
+        </select>
+        <button class="btn btn-outline btn-small" id="usersSearchBtn">খুঁজুন</button>
+      </div>
+      <div id="usersContent" class="loading">লোড হচ্ছে…</div>
+      <div class="pager" id="usersPager"></div>
+    </section>
+
+    <!-- ---------- Reports ---------- -->
+    <section class="panel" id="panel-reports">
+      <div class="toolbar">
+        <select id="reportsFilter">
+          <option value="">সব রিপোর্ট</option>
+          <option value="false">অমীমাংসিত</option>
+          <option value="true">সমাধান হয়েছে</option>
+        </select>
+        <button class="btn btn-outline btn-small" id="reportsSearchBtn">খুঁজুন</button>
+      </div>
+      <div id="reportsContent" class="loading">লোড হচ্ছে…</div>
+      <div class="pager" id="reportsPager"></div>
+    </section>
+  </main>
+</div>
+
+<!-- ---------- Category modal ---------- -->
+<div class="modal-overlay" id="categoryModalOverlay">
+  <div class="modal">
+    <h3 id="categoryModalTitle">নতুন ক্যাটাগরি</h3>
+    <form id="categoryForm">
+      <div class="field">
+        <label>নাম</label>
+        <input type="text" id="catName" required maxlength="60">
+      </div>
+      <div class="field">
+        <label>কোড (১-২ অক্ষর, বড় হাতের/সংখ্যা)</label>
+        <input type="text" id="catCode" required maxlength="2" style="text-transform:uppercase">
+      </div>
+      <div class="field" id="catParentField">
+        <label>প্যারেন্ট ক্যাটাগরি (খালি রাখলে top-level হবে)</label>
+        <select id="catParent"><option value="">— কোনোটাই না (Top-level) —</option></select>
+      </div>
+      <div class="field">
+        <label>Sort order</label>
+        <input type="number" id="catSortOrder" value="0" min="0">
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="catActive" checked>
+        <label for="catActive">সক্রিয় (Active)</label>
+      </div>
+      <div id="categoryModalError"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline btn-small" id="categoryModalCancel">বাতিল</button>
+        <button type="submit" class="btn btn-primary btn-small" id="categoryModalSave">সেভ করুন</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_BASE = 'https://poultry-bazar-api.onrender.com/api/v1';
+const LS_ACCESS = 'pb_admin_access';
+const LS_REFRESH = 'pb_admin_refresh';
+
+let tokens = {
+  access: localStorage.getItem(LS_ACCESS) || null,
+  refresh: localStorage.getItem(LS_REFRESH) || null,
+};
+let refreshInFlight = null;
+
+function saveTokens(t) {
+  tokens = t;
+  if (t.access) localStorage.setItem(LS_ACCESS, t.access); else localStorage.removeItem(LS_ACCESS);
+  if (t.refresh) localStorage.setItem(LS_REFRESH, t.refresh); else localStorage.removeItem(LS_REFRESH);
+}
+function clearTokens() { saveTokens({ access: null, refresh: null }); }
+
+async function refreshOnce() {
+  if (refreshInFlight) return refreshInFlight;
+  refreshInFlight = (async () => {
+    if (!tokens.refresh) return false;
+    try {
+      const res = await fetch(API_BASE + '/auth/token/refresh', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken: tokens.refresh }),
+      });
+      if (!res.ok) {
+        if (res.status === 401 || res.status === 403) clearTokens();
+        return false;
+      }
+      const data = await res.json();
+      saveTokens({ access: data.accessToken, refresh: data.refreshToken });
+      return true;
+    } catch (e) {
+      return false; // network failure: keep tokens, caller will surface an error
+    }
+  })();
+  try { return await refreshInFlight; } finally { refreshInFlight = null; }
+}
+
+async function apiFetch(path, opts = {}, retry = true) {
+  const headers = Object.assign({}, opts.headers);
+  if (tokens.access) headers['Authorization'] = 'Bearer ' + tokens.access;
+  if (opts.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
+  const res = await fetch(API_BASE + path, Object.assign({}, opts, { headers }));
+  if (res.status === 401 && retry && tokens.refresh) {
+    const ok = await refreshOnce();
+    if (ok) return apiFetch(path, opts, false);
+    goToLogin();
+    throw new Error('সেশনের মেয়াদ শেষ হয়ে গেছে, আবার লগইন করুন');
+  }
+  if (res.status === 204) return null;
+  let data = null;
+  try { data = await res.json(); } catch (e) {}
+  if (!res.ok) {
+    throw new Error(data ? errMessage(data) : ('HTTP ' + res.status));
+  }
+  return data;
+}
+
+function toast(msg, isErr) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (isErr ? ' err' : '');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { el.className = 'toast'; }, 3200);
+}
+
+function fmtDate(s) {
+  if (!s) return '';
+  return s.replace('T', ' ').slice(0, 16);
+}
+
+function goToLogin() {
+  clearTokens();
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+function goToApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadOverview();
+}
+
+// ---------------- Login ----------------
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const mobile = document.getElementById('loginMobile').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errBox = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
+  errBox.innerHTML = '';
+  btn.disabled = true;
+  btn.textContent = 'লগইন হচ্ছে…';
+  try {
+    const res = await fetch(API_BASE + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mobileNumber: mobile, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(errMessage(data));
+    if (data.user.role !== 'ADMIN') throw new Error('এই অ্যাকাউন্টটি অ্যাডমিন না — শুধু অ্যাডমিন অ্যাকাউন্ট দিয়ে প্রবেশ করা যাবে');
+    saveTokens({ access: data.accessToken, refresh: data.refreshToken });
+    goToApp();
+  } catch (err) {
+    errBox.innerHTML = '<div class="error-box">' + escapeHtml(err.message) + '</div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'লগইন করুন';
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  goToLogin();
+});
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function errMessage(data) {
+  if (!data) return 'অজানা সমস্যা';
+  if (data.fieldErrors && data.fieldErrors.length) {
+    return data.fieldErrors.map(f => `${f.field}: ${f.message}`).join('; ');
+  }
+  return data.message || 'অজানা সমস্যা';
+}
+
+// ---------------- Tabs ----------------
+document.getElementById('tabs').addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-tab]');
+  if (!btn) return;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  if (btn.dataset.tab === 'overview' && !overviewLoaded) loadOverview();
+  if (btn.dataset.tab === 'ads' && !adsLoaded) loadAds();
+  if (btn.dataset.tab === 'categories' && !categoriesLoaded) loadCategories();
+  if (btn.dataset.tab === 'users' && !usersLoaded) loadUsers();
+  if (btn.dataset.tab === 'reports' && !reportsLoaded) loadReports();
+});
+
+// ---------------- Overview ----------------
+let overviewLoaded = false;
+async function loadOverview() {
+  const el = document.getElementById('overviewContent');
+  el.innerHTML = '<div class="loading">লোড হচ্ছে…</div>';
+  try {
+    const m = await apiFetch('/admin/metrics');
+    overviewLoaded = true;
+    const stats = [
+      ['totalUsers', 'মোট ব্যবহারকারী'], ['activeSellers', 'সক্রিয় বিক্রেতা'],
+      ['newUsers7d', 'নতুন ব্যবহারকারী (৭ দিন)'], ['newUsers30d', 'নতুন ব্যবহারকারী (৩০ দিন)'],
+      ['suspendedUsers', 'সাসপেন্ড হওয়া ব্যবহারকারী'],
+      ['activeAds', 'চালু বিজ্ঞাপন'], ['newAds7d', 'নতুন বিজ্ঞাপন (৭ দিন)'], ['newAds30d', 'নতুন বিজ্ঞাপন (৩০ দিন)'],
+      ['soldAdsTotal', 'মোট বিক্রি হয়েছে'], ['soldAds30d', 'বিক্রি (৩০ দিন)'], ['expiredAdsTotal', 'মেয়াদোত্তীর্ণ'],
+      ['sellThroughRate', 'সেল-থ্রু রেট (%)'], ['totalBirdsListed', 'মোট মুরগী তালিকাভুক্ত'],
+      ['pendingFeedback', 'অমীমাংসিত ফিডব্যাক'], ['openReports', 'খোলা রিপোর্ট'],
+      ['activeDevicesToday', 'সক্রিয় ডিভাইস (আজ)'], ['activeDevices7d', 'সক্রিয় ডিভাইস (৭ দিন)'], ['activeDevices30d', 'সক্রিয় ডিভাইস (৩০ দিন)'],
+    ];
+    let html = '<div class="stat-grid">';
+    for (const [key, label] of stats) {
+      let v = m[key];
+      if (key === 'sellThroughRate') v = (Math.round(v * 10) / 10) + '%';
+      html += `<div class="stat-card"><div class="n">${v ?? 0}</div><div class="l">${label}</div></div>`;
+    }
+    html += '</div>';
+
+    // hourly traffic
+    const hMax = Math.max(1, ...(m.hourlyTraffic || []).map(x => x.count));
+    html += '<div class="chart-row"><div class="card"><h3 style="margin:0 0 10px;font-size:14px;">দিনের কোন সময় সবচেয়ে ব্যস্ত (গত ৭ দিন)</h3>';
+    html += '<div class="bars">' + (m.hourlyTraffic || []).map(x => `<div class="bar" style="height:${Math.max(2, x.count / hMax * 100)}%" title="${x.label}:00 — ${x.count}"></div>`).join('') + '</div>';
+    html += '<div class="bar-labels">' + (m.hourlyTraffic || []).map((x, i) => `<span>${i % 3 === 0 ? x.label : ''}</span>`).join('') + '</div>';
+    html += '</div>';
+
+    html += '<div class="card"><h3 style="margin:0 0 10px;font-size:14px;">শীর্ষ সাব-ক্যাটাগরি</h3><div class="toplist">';
+    html += (m.topSubcategories || []).map(x => `<div class="row"><span>${escapeHtml(x.label)}</span><b>${x.count}</b></div>`).join('') || '<div class="empty">কোনো তথ্য নেই</div>';
+    html += '</div></div></div>';
+
+    // ads per day
+    const dMax = Math.max(1, ...(m.adsPerDay || []).map(x => x.count));
+    html += '<div class="chart-row"><div class="card"><h3 style="margin:0 0 10px;font-size:14px;">দৈনিক নতুন বিজ্ঞাপন (গত ৩০ দিন)</h3>';
+    html += '<div class="bars amber">' + (m.adsPerDay || []).map(x => `<div class="bar" style="height:${Math.max(2, x.count / dMax * 100)}%" title="${x.date}: ${x.count}"></div>`).join('') + '</div>';
+    html += '</div>';
+
+    html += '<div class="card"><h3 style="margin:0 0 10px;font-size:14px;">শীর্ষ জেলা</h3><div class="toplist">';
+    html += (m.topDistricts || []).map(x => `<div class="row"><span>${escapeHtml(x.label)}</span><b>${x.count}</b></div>`).join('') || '<div class="empty">কোনো তথ্য নেই</div>';
+    html += '</div></div></div>';
+
+    // recent ads
+    html += '<div class="card"><h3 style="margin:0 0 12px;font-size:14px;">সাম্প্রতিক বিজ্ঞাপন</h3><div class="table-wrap"><table><thead><tr><th>কোড</th><th>বিবরণ</th><th>জেলা</th><th>Status</th><th>তারিখ</th></tr></thead><tbody>';
+    html += (m.recentAds || []).map(a => `<tr><td>${escapeHtml(a.adCode)}</td><td>${escapeHtml(a.label || '')}</td><td>${escapeHtml(a.district || '')}</td><td><span class="badge ${a.status}">${a.status}</span></td><td>${escapeHtml(a.publishedAt || '')}</td></tr>`).join('') || '<tr><td colspan="5" class="empty">কোনো তথ্য নেই</td></tr>';
+    html += '</tbody></table></div></div>';
+
+    el.innerHTML = html;
+  } catch (err) {
+    el.innerHTML = '<div class="error-box">' + escapeHtml(err.message) + '</div>';
+  }
+}
+
+// ---------------- Ads ----------------
+let adsLoaded = false;
+let adsPage = 0;
+async function loadAds(page) {
+  adsPage = page ?? 0;
+  const el = document.getElementById('adsContent');
+  el.innerHTML = '<div class="loading">লোড হচ্ছে…</div>';
+  const code = document.getElementById('adsSearch').value.trim();
+  const status = document.getElementById('adsStatusFilter').value;
+  const q = new URLSearchParams({ page: adsPage, size: 20 });
+  if (code) q.set('code', code);
+  if (status) q.set('status', status);
+  try {
+    const res = await apiFetch('/admin/ads?' + q.toString());
+    adsLoaded = true;
+    let html = '<div class="card"><div class="table-wrap"><table><thead><tr><th>কোড</th><th>ক্যাটাগরি</th><th>জেলা</th><th>মুরগী</th><th>Status</th><th>প্রকাশ</th><th>একশন</th></tr></thead><tbody>';
+    for (const ad of res.items) {
+      html += `<tr>
+        <td>${escapeHtml(ad.adCode)}</td>
+        <td>${escapeHtml((ad.subcategory || ad.category || {}).name || '')}</td>
+        <td>${escapeHtml((ad.location && ad.location.district && ad.location.district.name) || '')}</td>
+        <td>${ad.birdCount ?? ''}</td>
+        <td><span class="badge ${ad.status}">${ad.status}</span></td>
+        <td>${fmtDate(ad.publishedAt)}</td>
+        <td class="action-cell">
+          <select class="status-select" data-code="${escapeHtml(ad.adCode)}">
+            <option value="">status বদলান</option>
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="SOLD">SOLD</option>
+            <option value="EXPIRED">EXPIRED</option>
+            <option value="DELETED">DELETED</option>
+          </select>
+          <button class="btn btn-danger btn-small" data-del="${escapeHtml(ad.adCode)}">ডিলিট</button>
+        </td>
+      </tr>`;
+    }
+    html += '</tbody></table></div></div>';
+    if (!res.items.length) html = '<div class="card"><div class="empty">কোনো বিজ্ঞাপন পাওয়া যায়নি</div></div>';
+    el.innerHTML = html;
+
+    el.querySelectorAll('.status-select').forEach(sel => {
+      sel.addEventListener('change', async () => {
+        if (!sel.value) return;
+        const code = sel.dataset.code;
+        if (!confirm(`${code} — status "${sel.value}"-এ পরিবর্তন করবেন?`)) { sel.value = ''; return; }
+        try {
+          await apiFetch(`/admin/ads/${encodeURIComponent(code)}/status`, { method: 'PATCH', body: JSON.stringify({ status: sel.value }) });
+          toast('Status পরিবর্তন হয়েছে');
+          loadAds(adsPage);
+        } catch (err) { toast(err.message, true); }
+      });
+    });
+    el.querySelectorAll('[data-del]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const code = btn.dataset.del;
+        if (!confirm(`${code} বিজ্ঞাপনটি স্থায়ীভাবে ডিলিট করবেন? এর ছবিও মুছে যাবে।`)) return;
+        try {
+          await apiFetch(`/admin/ads/${encodeURIComponent(code)}`, { method: 'DELETE' });
+          toast('বিজ্ঞাপন ডিলিট হয়েছে');
+          loadAds(adsPage);
+        } catch (err) { toast(err.message, true); }
+      });
+    });
+
+    renderPager('adsPager', res.page, loadAds);
+  } catch (err) {
+    el.innerHTML = '<div class="error-box">' + escapeHtml(err.message) + '</div>';
+  }
+}
+document.getElementById('adsSearchBtn').addEventListener('click', () => loadAds(0));
+
+function renderPager(elId, page, loadFn) {
+  const el = document.getElementById(elId);
+  if (!page || page.totalPages <= 1) { el.innerHTML = ''; return; }
+  const cur = page.page;
+  el.innerHTML = `
+    <button class="btn btn-outline btn-small" ${cur <= 0 ? 'disabled' : ''} id="${elId}Prev">← আগে</button>
+    <span>পাতা ${cur + 1} / ${page.totalPages} (মোট ${page.totalElements})</span>
+    <button class="btn btn-outline btn-small" ${cur >= page.totalPages - 1 ? 'disabled' : ''} id="${elId}Next">পরে →</button>
+  `;
+  const prev = document.getElementById(elId + 'Prev');
+  const next = document.getElementById(elId + 'Next');
+  if (prev) prev.addEventListener('click', () => loadFn(cur - 1));
+  if (next) next.addEventListener('click', () => loadFn(cur + 1));
+}
+
+// ---------------- Categories ----------------
+let categoriesLoaded = false;
+let categoriesCache = [];
+async function loadCategories() {
+  const el = document.getElementById('categoriesContent');
+  el.innerHTML = '<div class="loading">লোড হচ্ছে…</div>';
+  try {
+    const cats = await apiFetch('/admin/categories');
+    categoriesLoaded = true;
+    categoriesCache = cats;
+    const tops = cats.filter(c => !c.parentId);
+    let html = '';
+    for (const top of tops) {
+      html += categoryRowHtml(top, false);
+      const children = cats.filter(c => c.parentId === top.id);
+      for (const child of children) html += categoryRowHtml(child, true);
+    }
+    el.innerHTML = html || '<div class="empty">কোনো ক্যাটাগরি নেই</div>';
+    bindCategoryRowActions();
+    populateParentSelect();
+  } catch (err) {
+    el.innerHTML = '<div class="error-box">' + escapeHtml(err.message) + '</div>';
+  }
+}
+
+function categoryRowHtml(c, isChild) {
+  return `<div class="cat-row ${isChild ? 'child' : ''}">
+    <span class="code">${escapeHtml(c.codePrefix || '')}</span>
+    <span class="name">${escapeHtml(c.name)}</span>
+    <span class="badge ${!c.active}">${c.active ? 'Active' : 'Inactive'}</span>
+    <button class="btn btn-outline btn-small" data-edit="${c.id}">Edit</button>
+    <button class="btn btn-danger btn-small" data-delcat="${c.id}">Delete</button>
+  </div>`;
+}
+
+function bindCategoryRowActions() {
+  document.querySelectorAll('[data-edit]').forEach(btn => {
+    btn.addEventListener('click', () => openCategoryModal(categoriesCache.find(c => c.id == btn.dataset.edit)));
+  });
+  document.querySelectorAll('[data-delcat]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('এই ক্যাটাগরিটি ডিলিট করবেন?')) return;
+      try {
+        await apiFetch(`/admin/categories/${btn.dataset.delcat}`, { method: 'DELETE' });
+        toast('ক্যাটাগরি ডিলিট হয়েছে');
+        loadCategories();
+      } catch (err) { toast(err.message, true); }
+    });
+  });
+}
+
+function populateParentSelect() {
+  const sel = document.getElementById('catParent');
+  sel.innerHTML = '<option value="">— কোনোটাই না (Top-level) —</option>';
+  categoriesCache.filter(c => !c.parentId).forEach(c => {
+    sel.innerHTML += `<option value="${c.id}">${escapeHtml(c.name)}</option>`;
+  });
+}
+
+let editingCategoryId = null;
+function openCategoryModal(existing) {
+  editingCategoryId = existing ? existing.id : null;
+  document.getElementById('categoryModalTitle').textContent = existing ? 'ক্যাটাগরি এডিট করুন' : 'নতুন ক্যাটাগরি';
+  document.getElementById('catName').value = existing ? existing.name : '';
+  document.getElementById('catCode').value = existing ? (existing.codePrefix || '') : '';
+  document.getElementById('catSortOrder').value = existing ? (existing.sortOrder || 0) : 0;
+  document.getElementById('catActive').checked = existing ? !!existing.active : true;
+  document.getElementById('catParent').value = existing ? (existing.parentId || '') : '';
+  document.getElementById('catParent').disabled = !!existing; // parent can't change on edit
+  document.getElementById('categoryModalError').innerHTML = '';
+  document.getElementById('categoryModalOverlay').classList.add('open');
+}
+document.getElementById('addCategoryBtn').addEventListener('click', () => openCategoryModal(null));
+document.getElementById('categoryModalCancel').addEventListener('click', () => {
+  document.getElementById('categoryModalOverlay').classList.remove('open');
+});
+document.getElementById('categoryForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const errBox = document.getElementById('categoryModalError');
+  errBox.innerHTML = '';
+  const body = {
+    name: document.getElementById('catName').value.trim(),
+    code: document.getElementById('catCode').value.trim().toUpperCase(),
+    active: document.getElementById('catActive').checked,
+    sortOrder: parseInt(document.getElementById('catSortOrder').value || '0', 10),
+  };
+  try {
+    if (editingCategoryId) {
+      await apiFetch(`/admin/categories/${editingCategoryId}`, { method: 'PATCH', body: JSON.stringify(body) });
+    } else {
+      const parentId = document.getElementById('catParent').value;
+      if (parentId) body.parentId = parseInt(parentId, 10);
+      await apiFetch('/admin/categories', { method: 'POST', body: JSON.stringify(body) });
+    }
+    toast('সেভ হয়েছে');
+    document.getElementById('categoryModalOverlay').classList.remove('open');
+    loadCategories();
+  } catch (err) {
+    errBox.innerHTML = '<div class="error-box">' + escapeHtml(err.message) + '</div>';
+  }
+});
+
+// ---------------- Users ----------------
+let usersLoaded = false;
+let usersPage = 0;
+async function loadUsers(page) {
+  usersPage = page ?? 0;
+  const el = document.getElementById('usersContent');
+  el.innerHTML = '<div class="loading">লোড হচ্ছে…</div>';
+  const q = new URLSearchParams({ page: usersPage, size: 20 });
+  const query = document.getElementById('usersSearch').value.trim();
+  const status = document.getElementById('usersStatusFilter').value;
+  if (query) q.set('q', query);
+  if (status) q.set('status', status);
+  try {
+    const res = await apiFetch('/admin/users?' + q.toString());
+    usersLoaded = true;
+    let html = '<div class="card"><div class="table-wrap"><table><thead><tr><th>নাম</th><th>মোবাইল</th><th>রোল</th><th>Status</th><th>যোগদান</th><th>একশন</th></tr></thead><tbody>';
+    for (const u of res.items) {
+      html += `<tr>
+        <td>${escapeHtml(u.name)}</td>
+        <td>${escapeHtml(u.mobileNumber)}</td>
+        <td>${u.role}</td>
+        <td><span class="badge ${u.status}">${u.status}</span></td>
+        <td>${fmtDate(u.createdAt)}</td>
+        <td>
+          ${u.status === 'SUSPENDED'
+            ? `<button class="btn btn-outline btn-small" data-activate="${u.id}">সক্রিয় করুন</button>`
+            : `<button class="btn btn-danger btn-small" data-suspend="${u.id}">সাসপেন্ড</button>`}
+        </td>
+      </tr>`;
+    }
+    html += '</tbody></table></div></div>';
+    if (!res.items.length) html = '<div class="card"><div class="empty">কোনো ব্যবহারকারী পাওয়া যায়নি</div></div>';
+    el.innerHTML = html;
+
+    el.querySelectorAll('[data-suspend]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('এই ব্যবহারকারীকে সাসপেন্ড করবেন?')) return;
+        try {
+          await apiFetch(`/admin/users/${btn.dataset.suspend}/status`, { method: 'PATCH', body: JSON.stringify({ status: 'SUSPENDED' }) });
+          toast('সাসপেন্ড হয়েছে');
+          loadUsers(usersPage);
+        } catch (err) { toast(err.message, true); }
+      });
+    });
+    el.querySelectorAll('[data-activate]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        try {
+          await apiFetch(`/admin/users/${btn.dataset.activate}/status`, { method: 'PATCH', body: JSON.stringify({ status: 'ACTIVE' }) });
+          toast('সক্রিয় করা হয়েছে');
+          loadUsers(usersPage);
+        } catch (err) { toast(err.message, true); }
+      });
+    });
+
+    renderPager('usersPager', res.page, loadUsers);
+  } catch (err) {
+    el.innerHTML = '<div class="error-box">' + escapeHtml(err.message) + '</div>';
+  }
+}
+document.getElementById('usersSearchBtn').addEventListener('click', () => loadUsers(0));
+
+// ---------------- Reports ----------------
+let reportsLoaded = false;
+let reportsPage = 0;
+const REASON_LABELS = { FAKE: 'ভুয়া', ALREADY_SOLD: 'আগেই বিক্রি হয়েছে', WRONG_INFO: 'ভুল তথ্য', SPAM: 'স্প্যাম', OTHER: 'অন্যান্য' };
+async function loadReports(page) {
+  reportsPage = page ?? 0;
+  const el = document.getElementById('reportsContent');
+  el.innerHTML = '<div class="loading">লোড হচ্ছে…</div>';
+  const q = new URLSearchParams({ page: reportsPage, size: 20 });
+  const resolved = document.getElementById('reportsFilter').value;
+  if (resolved) q.set('resolved', resolved);
+  try {
+    const res = await apiFetch('/admin/reports?' + q.toString());
+    reportsLoaded = true;
+    let html = '<div class="card"><div class="table-wrap"><table><thead><tr><th>বিজ্ঞাপন কোড</th><th>কারণ</th><th>নোট</th><th>রিপোর্টার</th><th>Status</th><th>তারিখ</th><th>একশন</th></tr></thead><tbody>';
+    for (const r of res.items) {
+      html += `<tr>
+        <td>${escapeHtml(r.adCode)}</td>
+        <td>${REASON_LABELS[r.reason] || r.reason}</td>
+        <td>${escapeHtml(r.note || '')}</td>
+        <td>${escapeHtml(r.reporterMobile || '')}</td>
+        <td><span class="badge ${r.resolved}">${r.resolved ? 'সমাধান হয়েছে' : 'অমীমাংসিত'}</span></td>
+        <td>${fmtDate(r.createdAt)}</td>
+        <td>${r.resolved ? '' : `<button class="btn btn-outline btn-small" data-resolve="${r.id}">সমাধান করুন</button>`}</td>
+      </tr>`;
+    }
+    html += '</tbody></table></div></div>';
+    if (!res.items.length) html = '<div class="card"><div class="empty">কোনো রিপোর্ট নেই</div></div>';
+    el.innerHTML = html;
+
+    el.querySelectorAll('[data-resolve]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        try {
+          await apiFetch(`/admin/reports/${btn.dataset.resolve}/resolve`, { method: 'POST' });
+          toast('সমাধান করা হয়েছে');
+          loadReports(reportsPage);
+        } catch (err) { toast(err.message, true); }
+      });
+    });
+
+    renderPager('reportsPager', res.page, loadReports);
+  } catch (err) {
+    el.innerHTML = '<div class="error-box">' + escapeHtml(err.message) + '</div>';
+  }
+}
+document.getElementById('reportsSearchBtn').addEventListener('click', () => loadReports(0));
+
+// ---------------- Boot ----------------
+if (tokens.access) { goToApp(); } else { goToLogin(); }
+</script>
+</body>
+</html>
