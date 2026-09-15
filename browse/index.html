@@ -216,17 +216,25 @@
   }
   .drawer-nav a:hover, .drawer-nav button:hover { background: #f4f5f3; }
 
+  /* ---------- Form fields (shared: auth screens + wizard) ---------- */
+  .field { margin-bottom: 16px; }
+  .field label, label.field-label { display: block; font-size: 13px; color: #555; margin-bottom: 7px; font-weight: 600; }
+  .field input[type=text], .field input[type=password], .field input[type=number], .field input[type=date],
+  .field select, .field textarea {
+    width: 100%; padding: 14px; border: 1.5px solid var(--border); border-radius: 12px;
+    background: #fff; font-size: 14.5px; outline: none; font-family: inherit; color: var(--ink);
+    -webkit-appearance: none; appearance: none;
+  }
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23666' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--green); }
+
   /* ---------- Auth screens ---------- */
   .auth-wrap { max-width: 420px; margin: 0 auto; padding: 24px 20px 40px; }
   .auth-wrap h1 { font-size: 21px; margin: 0 0 6px; }
   .auth-wrap p.sub { color: #666; font-size: 13.5px; margin: 0 0 20px; }
-  .auth-wrap .field { margin-bottom: 14px; }
-  .auth-wrap label { display: block; font-size: 13px; color: #555; margin-bottom: 6px; font-weight: 600; }
-  .auth-wrap input {
-    width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px;
-    background: #fff; font-size: 14.5px; outline: none;
-  }
-  .auth-wrap input:focus { border-color: var(--green); }
   .pw-wrap { position: relative; }
   .pw-wrap button { position: absolute; right: 6px; top: 6px; bottom: 6px; width: 40px; border: none; background: none; font-size: 16px; }
   .auth-wrap .link-row { text-align: right; margin-bottom: 14px; font-size: 13px; }
@@ -237,19 +245,25 @@
   .dev-note { background: #fff8e1; color: #8a6d00; border-radius: 10px; padding: 10px 12px; font-size: 12.5px; margin-bottom: 14px; }
 
   /* ---------- Sell wizard ---------- */
-  .wizard-steps { display: flex; justify-content: center; gap: 22px; padding: 16px 0 8px; background: #fff; }
-  .wizard-step { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #aab0a8; font-size: 11px; }
-  .wizard-step .dot { width: 30px; height: 30px; border-radius: 50%; background: #eceee9; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .wizard-steps { display: flex; justify-content: center; gap: 18px; padding: 18px 12px; background: #fff; border-bottom: 1px solid var(--divider); }
+  .wizard-step { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #aab0a8; font-size: 11px; font-weight: 600; }
+  .wizard-step .dot { width: 34px; height: 34px; border-radius: 50%; background: #eceee9; display: flex; align-items: center; justify-content: center; font-size: 15px; transition: background .15s, color .15s; }
   .wizard-step.active { color: var(--green); }
   .wizard-step.active .dot { background: var(--green); color: #fff; }
-  .wizard-body { padding: 16px; padding-bottom: 90px; }
-  .wizard-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid var(--divider); padding: 10px 14px; display: flex; gap: 10px; z-index: 30; }
+  .wizard-body { padding: 18px 14px 100px; }
+  .wizard-card {
+    background: #fff; border-radius: 16px; padding: 18px 16px; margin-bottom: 14px;
+  }
+  .wizard-card h3 { margin: 0 0 16px; font-size: 15px; color: var(--ink); }
+  .wizard-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid var(--divider); padding: 12px 14px; display: flex; gap: 10px; z-index: 30; }
   .wizard-nav button { flex: 1; }
   .health-cards { display: flex; gap: 12px; }
-  .health-card { flex: 1; border: 2px solid var(--border); border-radius: 16px; padding: 24px 10px; text-align: center; background: #fff; }
+  .health-card { flex: 1; border: 2px solid var(--border); border-radius: 16px; padding: 24px 10px; text-align: center; background: #fff; font-weight: 700; font-size: 14.5px; }
   .health-card .emoji { font-size: 34px; margin-bottom: 8px; }
-  .health-card.selected { border-color: var(--green); background: var(--soft-green); }
-  .total-weight-box { background: var(--soft-green); border-radius: 12px; padding: 12px 14px; margin-top: 4px; font-size: 13.5px; color: var(--green-dark); }
+  .health-card.selected { border-color: var(--green); background: var(--soft-green); color: var(--green-dark); }
+  .total-weight-box { background: var(--soft-green); border-radius: 12px; padding: 13px 14px; margin-top: 6px; font-size: 14px; font-weight: 600; color: var(--green-dark); text-align: center; }
+  .photo-section-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .photo-section-label .count { color: var(--green); font-weight: 700; }
   .photo-grid { display: flex; gap: 10px; flex-wrap: wrap; }
   .photo-thumb { width: 92px; height: 92px; border-radius: 10px; position: relative; overflow: hidden; background: #eceee9; }
   .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
@@ -501,27 +515,41 @@
   </div>
   <div class="wizard-body">
     <div id="wizardStep0">
-      <div class="field"><label>কোন ধরনের মুরগী?</label><select id="wCategory"><option value="">নির্বাচন করুন</option></select></div>
-      <div class="field" id="wSubField" style="display:none;"><label>সাব-ক্যাটাগরি</label><select id="wSubcategory"><option value="">নির্বাচন করুন</option></select></div>
-      <div class="field"><label>মুরগীর সংখ্যা (পিছ)</label><input type="number" id="wBirdCount" min="1" max="1000000"></div>
-      <div class="field"><label>আনুমানিক গড় ওজন (গ্রাম)</label><input type="number" id="wAvgWeight" min="1" max="50000"></div>
-      <div class="field"><label>বয়স (দিন)</label><input type="number" id="wAgeDays" min="1" max="3650"></div>
-      <div class="total-weight-box" id="wTotalWeightBox">মোট ওজন হিসাব করা হবে</div>
+      <div class="wizard-card">
+        <h3>মুরগীর ধরন</h3>
+        <div class="field"><label>কোন ধরনের মুরগী?</label><select id="wCategory"><option value="">নির্বাচন করুন</option></select></div>
+        <div class="field" id="wSubField" style="display:none;"><label>সাব-ক্যাটাগরি</label><select id="wSubcategory"><option value="">নির্বাচন করুন</option></select></div>
+      </div>
+      <div class="wizard-card">
+        <h3>পরিমাণ ও বয়স</h3>
+        <div class="field"><label>মুরগীর সংখ্যা (পিছ)</label><input type="number" id="wBirdCount" min="1" max="1000000" placeholder="যেমন: ১০০"></div>
+        <div class="field"><label>আনুমানিক গড় ওজন (গ্রাম)</label><input type="number" id="wAvgWeight" min="1" max="50000" placeholder="যেমন: ১৫০০"></div>
+        <div class="field"><label>বয়স (দিন)</label><input type="number" id="wAgeDays" min="1" max="3650" placeholder="যেমন: ৩০"></div>
+        <div class="total-weight-box" id="wTotalWeightBox">মোট ওজন হিসাব করা হবে</div>
+      </div>
     </div>
     <div id="wizardStep1" style="display:none;">
-      <label style="display:block;margin-bottom:10px;font-weight:600;">মুরগী সুস্থ নাকি অসুস্থ?</label>
-      <div class="health-cards">
-        <div class="health-card" data-health="HEALTHY"><div class="emoji">🐔</div>সুস্থ</div>
-        <div class="health-card" data-health="SICK"><div class="emoji">🤒</div>অসুস্থ</div>
+      <div class="wizard-card">
+        <h3>মুরগী সুস্থ নাকি অসুস্থ?</h3>
+        <div class="health-cards">
+          <div class="health-card" data-health="HEALTHY"><div class="emoji">🐔</div>সুস্থ</div>
+          <div class="health-card" data-health="SICK"><div class="emoji">🤒</div>অসুস্থ</div>
+        </div>
       </div>
     </div>
     <div id="wizardStep2" style="display:none;">
-      <div class="field"><label>বিভাগ নির্বাচন করুন</label><select id="wDivision"><option value="">নির্বাচন করুন</option></select></div>
-      <div class="field" id="wDistrictField" style="display:none;"><label>জেলা নির্বাচন করুন</label><select id="wDistrict"><option value="">নির্বাচন করুন</option></select></div>
-      <div class="field" id="wThanaField" style="display:none;"><label>থানা নির্বাচন করুন</label><select id="wThana"><option value="">নির্বাচন করুন</option></select></div>
-      <div class="field"><label>গ্রাম/এলাকা (ঐচ্ছিক)</label><input type="text" id="wVillage"></div>
-      <div class="field">
-        <label>ছবি (৫টি আবশ্যক) — <span id="wPhotoCount">০/৫</span></label>
+      <div class="wizard-card">
+        <h3>এলাকা</h3>
+        <div class="field"><label>বিভাগ নির্বাচন করুন</label><select id="wDivision"><option value="">নির্বাচন করুন</option></select></div>
+        <div class="field" id="wDistrictField" style="display:none;"><label>জেলা নির্বাচন করুন</label><select id="wDistrict"><option value="">নির্বাচন করুন</option></select></div>
+        <div class="field" id="wThanaField" style="display:none;"><label>থানা নির্বাচন করুন</label><select id="wThana"><option value="">নির্বাচন করুন</option></select></div>
+        <div class="field" style="margin-bottom:0;"><label>গ্রাম/এলাকা (ঐচ্ছিক)</label><input type="text" id="wVillage" placeholder="যেমন: ধুবড়িয়া গ্রাম"></div>
+      </div>
+      <div class="wizard-card">
+        <div class="photo-section-label">
+          <h3 style="margin:0;">ছবি (৫টি আবশ্যক)</h3>
+          <span class="count" id="wPhotoCount">০/৫</span>
+        </div>
         <div class="photo-grid" id="wPhotoGrid">
           <button type="button" class="photo-add" id="wPhotoAddBtn">+</button>
         </div>
@@ -529,8 +557,11 @@
       </div>
     </div>
     <div id="wizardStep3" style="display:none;">
-      <div id="reviewContent"></div>
-      <p style="font-size:12.5px;color:#888;margin-top:14px;">রিমার্ক: একই তথ্য দিয়ে আবার চাপলে দ্বিতীয় বিজ্ঞাপন তৈরি হবে না।</p>
+      <div class="wizard-card">
+        <h3>পর্যালোচনা করুন</h3>
+        <div id="reviewContent"></div>
+      </div>
+      <p style="font-size:12.5px;color:#888;text-align:center;margin-top:14px;">রিমার্ক: একই তথ্য দিয়ে আবার চাপলে দ্বিতীয় বিজ্ঞাপন তৈরি হবে না।</p>
     </div>
     <div id="wizardError"></div>
   </div>
