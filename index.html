@@ -90,6 +90,31 @@
     box-shadow: 0 6px 18px rgba(26,122,61,0.25);
   }
   .btn-primary:hover { background: var(--green-dark); }
+  .btn-secondary {
+    background: #fff;
+    color: var(--green);
+    border: 2px solid var(--green);
+    padding: 13px 26px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-secondary:hover { background: #eaf6ee; }
+  .nav-cta-outline {
+    border: 2px solid var(--green);
+    color: var(--green);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+    margin-right: 8px;
+  }
   .note {
     margin-top: 14px;
     font-size: 13px;
@@ -171,6 +196,7 @@
     <img src="logo.png" alt="Poultry BAZAR">
     <span>Poultry BAZAR</span>
   </div>
+  <a class="nav-cta-outline" href="/browse/">ওয়েবে ব্রাউজ করুন</a>
   <a class="nav-cta" href="https://dl.poultrybazarbd.com/poultry-bazar-v0.5.1.apk">অ্যাপ ডাউনলোড</a>
 </header>
 
@@ -180,6 +206,7 @@
     <p class="sub">Poultry BAZAR হলো বাংলাদেশের পোল্ট্রি বিক্রেতা ও ক্রেতাদের জন্য একটি সরাসরি মার্কেটপ্লেস — মধ্যস্বত্বভোগী ছাড়াই।</p>
     <div class="cta-row">
       <a class="btn-primary" href="https://dl.poultrybazarbd.com/poultry-bazar-v0.5.1.apk">⬇ Android অ্যাপ ডাউনলোড করুন</a>
+      <a class="btn-secondary" href="/browse/">🌐 ওয়েবে ব্রাউজ করুন</a>
     </div>
     <p class="note">Google Play Store সংস্করণ শীঘ্রই আসছে। এখন সরাসরি APK ইনস্টল করে ব্যবহার করা যাবে।</p>
   </div>
@@ -219,8 +246,11 @@
 
 <section class="download">
   <h2>এখনই ডাউনলোড করুন</h2>
-  <p>Android ফোনে সরাসরি ইনস্টল করুন — মাত্র কয়েক সেকেন্ডে।</p>
-  <a class="btn-primary" href="https://dl.poultrybazarbd.com/poultry-bazar-v0.5.1.apk">⬇ Poultry BAZAR ডাউনলোড করুন (APK)</a>
+  <p>Android ফোনে সরাসরি ইনস্টল করুন, অথবা সরাসরি ব্রাউজারে ব্যবহার করুন — কোনো ইনস্টল ছাড়াই।</p>
+  <div class="cta-row" style="justify-content:center;">
+    <a class="btn-primary" href="https://dl.poultrybazarbd.com/poultry-bazar-v0.5.1.apk">⬇ Poultry BAZAR ডাউনলোড করুন (APK)</a>
+    <a class="btn-secondary" href="/browse/">🌐 ওয়েবে ব্রাউজ করুন</a>
+  </div>
 </section>
 
 <footer>
