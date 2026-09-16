@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poultry BAZAR — বাংলাদেশের পোল্ট্রি মার্কেটপ্লেস</title>
+<meta name="description" content="Poultry BAZAR — সহজে মুরগী বিক্রি করুন, দ্রুত ক্রেতার কাছে পৌঁছান। বিভাগ, জেলা ও থানাভিত্তিক বিজ্ঞাপন, সরাসরি বিক্রেতার সাথে যোগাযোগ।">
+<link rel="icon" href="../logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1a7a3d;
+    --green-dark: #125c2c;
+    --amber: #f2a900;
+    --bg: #fbfbf8;
+    --text: #1f2a24;
+    --muted: #5c6b62;
+    --card: #ffffff;
+    --border: #e6e6df;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  a { color: inherit; }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .brand img { height: 38px; width: 38px; border-radius: 8px; }
+  .nav-cta {
+    background: var(--green);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .hero {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 24px 64px;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .hero h1 {
+    font-size: 38px;
+    line-height: 1.3;
+    margin: 0 0 16px;
+    font-weight: 700;
+  }
+  .hero p.sub {
+    font-size: 18px;
+    color: var(--muted);
+    margin: 0 0 28px;
+  }
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--green);
+    color: #fff;
+    padding: 15px 28px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 6px 18px rgba(26,122,61,0.25);
+  }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-secondary {
+    background: #fff;
+    color: var(--green);
+    border: 2px solid var(--green);
+    padding: 13px 26px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-secondary:hover { background: #eaf6ee; }
+  .nav-cta-outline {
+    border: 2px solid var(--green);
+    color: var(--green);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+    margin-right: 8px;
+  }
+  .note {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .hero-badge {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    text-align: center;
+  }
+  .hero-badge img { width: 120px; height: 120px; border-radius: 26px; margin-bottom: 16px; }
+  .hero-badge .tagline { font-weight: 600; color: var(--green-dark); font-size: 16px; }
+  section.features {
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 56px 24px;
+  }
+  .features-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .features-inner h2 {
+    text-align: center;
+    font-size: 26px;
+    margin: 0 0 40px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 24px;
+  }
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .card .icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: #eaf6ee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 14px;
+  }
+  .card h3 { margin: 0 0 8px; font-size: 17px; }
+  .card p { margin: 0; color: var(--muted); font-size: 14.5px; }
+  section.download {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 64px 24px;
+    text-align: center;
+  }
+  section.download h2 { font-size: 26px; margin: 0 0 12px; }
+  section.download p { color: var(--muted); margin: 0 0 28px; }
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13.5px;
+  }
+  @media (max-width: 760px) {
+    .hero { grid-template-columns: 1fr; padding-top: 24px; }
+    .hero h1 { font-size: 28px; }
+    .hero-badge { order: -1; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img src="../logo.png" alt="Poultry BAZAR">
+    <span>Poultry BAZAR</span>
+  </div>
+  <a class="nav-cta-outline" href="/">মার্কেটপ্লেসে যান</a>
+  <a class="nav-cta" href="https://dl.poultrybazarbd.com/poultry-bazar-v0.5.1.apk">অ্যাপ ডাউনলোড</a>
+</header>
+
+<section class="hero">
+  <div>
+    <h1>সহজে বিক্রি করুন আপনার মুরগী, দ্রুত ক্রেতার কাছে পৌঁছান</h1>
+    <p class="sub">Poultry BAZAR হলো বাংলাদেশের পোল্ট্রি বিক্রেতা ও ক্রেতাদের জন্য একটি সরাসরি মার্কেটপ্লেস — মধ্যস্বত্বভোগী ছাড়াই।</p>
+    <div class="cta-row">
+      <a class="btn-primary" href="https://dl.poultrybazarbd.com/poultry-bazar-v0.5.1.apk">⬇ Android অ্যাপ ডাউনলোড করুন</a>
+      <a class="btn-secondary" href="/">🌐 মার্কেটপ্লেসে যান</a>
+    </div>
+    <p class="note">Google Play Store সংস্করণ শীঘ্রই আসছে। এখন সরাসরি APK ইনস্টল করে ব্যবহার করা যাবে।</p>
+  </div>
+  <div class="hero-badge">
+    <img src="../logo.png" alt="Poultry BAZAR logo">
+    <div class="tagline">সহজে বিক্রি করুন, দ্রুত পৌঁছে দিন।</div>
+  </div>
+</section>
+
+<section class="features">
+  <div class="features-inner">
+    <h2>কেন Poultry BAZAR</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="icon">📍</div>
+        <h3>এলাকাভিত্তিক বিজ্ঞাপন</h3>
+        <p>বিভাগ, জেলা ও থানা অনুযায়ী খুঁজুন — নিজের কাছাকাছি বিক্রেতা বা ক্রেতা সহজেই পাবেন।</p>
+      </div>
+      <div class="card">
+        <div class="icon">📞</div>
+        <h3>সরাসরি যোগাযোগ</h3>
+        <p>কোনো মধ্যস্বত্বভোগী নেই — বিক্রেতার মোবাইল নম্বরে সরাসরি কল করে দরদাম করুন।</p>
+      </div>
+      <div class="card">
+        <div class="icon">📝</div>
+        <h3>সহজে বিজ্ঞাপন দিন</h3>
+        <p>মুরগীর সংখ্যা, ওজন, বয়স ও স্বাস্থ্যের তথ্য দিয়ে কয়েক মিনিটেই বিজ্ঞাপন পাবলিশ করুন।</p>
+      </div>
+      <div class="card">
+        <div class="icon">🆓</div>
+        <h3>সম্পূর্ণ বিনামূল্যে</h3>
+        <p>বিজ্ঞাপন দেওয়া ও দেখা — দুটোই সম্পূর্ণ ফ্রি, কোনো লুকানো চার্জ নেই।</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="download">
+  <h2>এখনই ডাউনলোড করুন</h2>
+  <p>Android ফোনে সরাসরি ইনস্টল করুন, অথবা সরাসরি ব্রাউজারে ব্যবহার করুন — কোনো ইনস্টল ছাড়াই।</p>
+  <div class="cta-row" style="justify-content:center;">
+    <a class="btn-primary" href="https://dl.poultrybazarbd.com/poultry-bazar-v0.5.1.apk">⬇ Poultry BAZAR ডাউনলোড করুন (APK)</a>
+    <a class="btn-secondary" href="/">🌐 মার্কেটপ্লেসে যান</a>
+  </div>
+</section>
+
+<footer>
+  &copy; 2026 Poultry BAZAR &middot; poultrybazarbd.com
+</footer>
+
+</body>
+</html>
