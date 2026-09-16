@@ -56,7 +56,12 @@
   header.topbar img.logo { height: 46px; }
   .topbar-side { flex: 1; display: flex; align-items: center; gap: 2px; }
   .topbar-side.right { justify-content: flex-end; }
-  .apk-btn { font-size: 20px; }
+  .apk-btn {
+    width: auto; height: 44px; flex-direction: column; justify-content: center;
+    gap: 1px; padding: 4px 8px; border-radius: 10px;
+  }
+  .apk-btn .apk-icon { font-size: 17px; line-height: 1; }
+  .apk-btn .apk-label { font-size: 9.5px; font-weight: 700; line-height: 1; color: var(--green-dark); }
 
   /* ---------- Notice ticker ---------- */
   .notice-bar {
@@ -319,7 +324,9 @@
 <header class="topbar">
   <div class="topbar-side">
     <button class="icon-btn" id="menuBtn">☰</button>
-    <a class="icon-btn apk-btn" href="https://dl.poultrybazarbd.com/poultry-bazar-v0.5.1.apk" title="অ্যাপ ডাউনলোড করুন">📱</a>
+    <a class="icon-btn apk-btn" href="https://dl.poultrybazarbd.com/poultry-bazar-v0.5.1.apk" title="অ্যাপ ডাউনলোড করুন">
+      <span class="apk-icon">⬇</span><span class="apk-label">অ্যাপ</span>
+    </a>
   </div>
   <a href="#/"><img class="logo" src="logo.png" alt="Poultry BAZAR"></a>
   <div class="topbar-side right">
