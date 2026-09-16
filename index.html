@@ -61,7 +61,14 @@
     gap: 1px; padding: 4px 8px; border-radius: 10px;
   }
   .apk-btn .apk-icon { font-size: 17px; line-height: 1; }
-  .apk-btn .apk-label { font-size: 9.5px; font-weight: 700; line-height: 1; color: var(--green-dark); }
+  .apk-btn .apk-label {
+    font-size: 9.5px; font-weight: 700; line-height: 1; color: var(--green-dark);
+    animation: apk-blink 1.6s ease-in-out infinite;
+  }
+  @keyframes apk-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
 
   /* ---------- Notice ticker ---------- */
   .notice-bar {
@@ -325,7 +332,7 @@
   <div class="topbar-side">
     <button class="icon-btn" id="menuBtn">☰</button>
     <a class="icon-btn apk-btn" href="https://dl.poultrybazarbd.com/poultry-bazar-v0.5.1.apk" title="অ্যাপ ডাউনলোড করুন">
-      <span class="apk-icon">⬇</span><span class="apk-label">অ্যাপ</span>
+      <span class="apk-icon">⬇</span><span class="apk-label">App</span>
     </a>
   </div>
   <a href="#/"><img class="logo" src="logo.png" alt="Poultry BAZAR"></a>
