@@ -825,6 +825,7 @@ async function loadUsers(page) {
           ${u.status === 'SUSPENDED'
             ? `<button class="btn btn-outline btn-small" data-activate="${u.id}">সক্রিয় করুন</button>`
             : `<button class="btn btn-danger btn-small" data-suspend="${u.id}">সাসপেন্ড</button>`}
+          <button class="btn btn-outline btn-small" data-reset-password="${u.id}">পাসওয়ার্ড রিসেট</button>
         </td>
       </tr>`;
     }
@@ -848,6 +849,17 @@ async function loadUsers(page) {
           await apiFetch(`/admin/users/${btn.dataset.activate}/status`, { method: 'PATCH', body: JSON.stringify({ status: 'ACTIVE' }) });
           toast('সক্রিয় করা হয়েছে');
           loadUsers(usersPage);
+        } catch (err) { toast(err.message, true); }
+      });
+    });
+    el.querySelectorAll('[data-reset-password]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const newPassword = prompt('নতুন পাসওয়ার্ড দিন (কমপক্ষে ৮ অক্ষর):');
+        if (!newPassword) return;
+        if (newPassword.length < 8) { toast('পাসওয়ার্ড কমপক্ষে ৮ অক্ষর হতে হবে', true); return; }
+        try {
+          await apiFetch(`/admin/users/${btn.dataset.resetPassword}/password`, { method: 'PATCH', body: JSON.stringify({ newPassword }) });
+          toast('পাসওয়ার্ড রিসেট হয়েছে');
         } catch (err) { toast(err.message, true); }
       });
     });
