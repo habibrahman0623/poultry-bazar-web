@@ -628,7 +628,7 @@ async function loadAds(page) {
           <td>${escapeHtml((ad.subcategory || ad.category || {}).name || '')}</td>
           <td>${escapeHtml((ad.location && ad.location.district && ad.location.district.name) || '')}</td>
           <td>${ad.birdCount ?? ''}</td>
-          <td><span class="badge ${ad.status}">${ad.status}</span></td>
+          <td><span class="badge ${ad.status}">${ad.status}</span>${ad.status === 'SOLD' && ad.soldPricePerKg != null ? `<div style="font-size:11px;color:var(--sold-grey,#8A8F89);margin-top:2px;">৳${ad.soldPricePerKg}/কেজি</div>` : ''}</td>
           <td>${fmtDate(ad.publishedAt)}</td>
           <td class="action-cell">
             <select class="status-select" data-code="${escapeHtml(ad.adCode)}">
@@ -654,9 +654,25 @@ async function loadAds(page) {
       sel.addEventListener('change', async () => {
         if (!sel.value) return;
         const code = sel.dataset.code;
-        if (!confirm(`${code} — status "${sel.value}"-এ পরিবর্তন করবেন?`)) { sel.value = ''; return; }
+        let pricePerKg;
+        if (sel.value === 'SOLD') {
+          const raw = prompt(`${code} — প্রতি কেজি বিক্রয় মূল্য লিখুন (৳)`);
+          if (raw == null) { sel.value = ''; return; }
+          pricePerKg = Number(raw.trim());
+          if (!raw.trim() || !isFinite(pricePerKg) || pricePerKg <= 0) {
+            toast('সঠিক মূল্য লিখুন', true);
+            sel.value = '';
+            return;
+          }
+        } else if (!confirm(`${code} — status "${sel.value}"-এ পরিবর্তন করবেন?`)) {
+          sel.value = '';
+          return;
+        }
         try {
-          await apiFetch(`/admin/ads/${encodeURIComponent(code)}/status`, { method: 'PATCH', body: JSON.stringify({ status: sel.value }) });
+          await apiFetch(`/admin/ads/${encodeURIComponent(code)}/status`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: sel.value, ...(pricePerKg != null ? { pricePerKg } : {}) }),
+          });
           toast('Status পরিবর্তন হয়েছে');
           loadAds(adsPage);
         } catch (err) { toast(err.message, true); }

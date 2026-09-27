@@ -138,6 +138,11 @@
     background: rgba(27,27,27,.78); color: #fff; padding: 5px 16px; border-radius: 8px;
     font-size: 12.5px; font-weight: 700; white-space: nowrap;
   }
+  .sold-price-badge {
+    position: absolute; top: 58%; left: 50%; transform: translate(-50%,-50%) rotate(-10deg);
+    background: rgba(27,27,27,.78); color: #fff; padding: 3px 10px; border-radius: 6px;
+    font-size: 10.5px; font-weight: 700; white-space: nowrap;
+  }
   .ad-card.sold { opacity: .62; }
   .ad-card .body { padding: 8px 10px 10px; }
   .ad-card .cat-label { font-weight: 700; font-size: 13.5px; margin-bottom: 3px; }
@@ -685,6 +690,10 @@ function formatWeight(kg) {
 }
 function formatGrams(g) { return bnDigits(Math.round(Number(g)).toString()); }
 function formatCount(n) { return bnDigits(Number(n).toLocaleString('en-US')); }
+function formatSoldPrice(price) {
+  const s = Number(price).toLocaleString('en-US', { maximumFractionDigits: 2 });
+  return bnDigits(s) + ' টাকা/প্রতি কেজি';
+}
 function escapeHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
@@ -983,6 +992,7 @@ function adCardHtml(ad) {
       <span class="pill code">${escapeHtml(ad.adCode)}</span>
       <span class="pill time">${formatRelativeTime(published)}</span>
       ${sold ? '<span class="sold-badge">বিক্রি হয়ে গেছে</span>' : ''}
+      ${sold && ad.soldPricePerKg != null ? `<span class="sold-price-badge">${formatSoldPrice(ad.soldPricePerKg)}</span>` : ''}
     </div>
     <div class="body">
       <div class="cat-label">${escapeHtml(catLabel)}</div>
@@ -1183,7 +1193,7 @@ function renderAdDetail(ad) {
     <div class="detail-body">
       <div class="code-pill">${escapeHtml(ad.adCode)}</div>
       <h1>${escapeHtml(catLabel)}</h1>
-      ${sold ? '<div class="sold-notice">✅ এই বিজ্ঞাপনটি বিক্রি হয়ে গেছে।</div>' : ''}
+      ${sold ? `<div class="sold-notice">✅ এই বিজ্ঞাপনটি বিক্রি হয়ে গেছে।${ad.soldPricePerKg != null ? `<br>${formatSoldPrice(ad.soldPricePerKg)}` : ''}</div>` : ''}
       <div class="seller-row">
         <div class="avatar">👤</div>
         <div class="info">
@@ -1602,6 +1612,7 @@ function myAdCardHtml(ad) {
   return `<div class="myad-card">
     <div class="top-row"><span class="code-cat">${escapeHtml(ad.adCode)} — ${escapeHtml(catLabel)}</span><span class="status-pill ${ad.status}">${statusLabel}</span></div>
     <div class="meta">${formatCount(ad.birdCount)} পিছ · ${formatWeight(ad.totalWeightKg)}</div>
+    ${ad.status === 'SOLD' && ad.soldPricePerKg != null ? `<div class="countdown" style="color:var(--sold-grey)">${formatSoldPrice(ad.soldPricePerKg)}</div>` : ''}
     ${ad.status === 'ACTIVE' ? `<div class="countdown">${formatEndsIn(ad.remainingSeconds)}</div>` : ''}
     <div class="myad-actions">
       <a href="#/ads/${encodeURIComponent(ad.adCode)}">বিজ্ঞাপনটি দেখুন</a>
@@ -1612,8 +1623,17 @@ function myAdCardHtml(ad) {
 function bindMyAdActions(el, status) {
   el.querySelectorAll('[data-mark-sold]').forEach(btn => {
     btn.addEventListener('click', async () => {
-      if (!confirm('এই বিজ্ঞাপনটি বিক্রি হয়ে গেছে বলে চিহ্নিত করবেন?')) return;
-      try { await apiFetch(`/me/ads/${encodeURIComponent(btn.dataset.markSold)}/sold`, { method: 'POST' }); loadMyAds(status); }
+      const raw = prompt('প্রতি কেজি বিক্রয় মূল্য লিখুন (৳)');
+      if (raw == null) return;
+      const price = Number(raw.trim());
+      if (!raw.trim() || !isFinite(price) || price <= 0) { alert('সঠিক মূল্য লিখুন'); return; }
+      try {
+        await apiFetch(`/me/ads/${encodeURIComponent(btn.dataset.markSold)}/sold`, {
+          method: 'POST',
+          body: JSON.stringify({ pricePerKg: price }),
+        });
+        loadMyAds(status);
+      }
       catch (err) { alert(err.message); }
     });
   });
