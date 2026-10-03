@@ -235,6 +235,7 @@
       <button data-tab="notices">নোটিশ</button>
       <button data-tab="contact">যোগাযোগ</button>
       <button data-tab="feedback">ফিডব্যাক</button>
+      <button data-tab="diagnostics">ডায়াগনস্টিক্স</button>
     </nav>
     <button class="btn btn-outline btn-small" id="logoutBtn">লগআউট</button>
   </header>
@@ -331,6 +332,14 @@
       </div>
       <div id="feedbackContent"><div class="loading">লোড হচ্ছে…</div></div>
       <div class="pager" id="feedbackPager"></div>
+    </section>
+
+    <!-- ---------- Diagnostics ---------- -->
+    <section class="panel" id="panel-diagnostics">
+      <div class="toolbar">
+        <button class="btn btn-outline btn-small" id="diagnosticsRefreshBtn">রিফ্রেশ</button>
+      </div>
+      <div id="diagnosticsContent"><div class="loading">লোড হচ্ছে…</div></div>
     </section>
   </main>
 </div>
@@ -545,6 +554,7 @@ document.getElementById('tabs').addEventListener('click', (e) => {
   if (btn.dataset.tab === 'notices' && !noticesLoaded) loadNotices();
   if (btn.dataset.tab === 'contact' && !contactLoaded) loadContact();
   if (btn.dataset.tab === 'feedback' && !feedbackLoaded) loadFeedback();
+  if (btn.dataset.tab === 'diagnostics') loadDiagnostics();
 });
 
 // ---------------- Overview ----------------
@@ -1188,6 +1198,70 @@ document.querySelectorAll('.feedback-subtab').forEach(btn => {
     loadFeedback(0);
   });
 });
+
+// ---------------- Diagnostics ----------------
+// Separate from apiFetch: actuator endpoints live at the API root, not under /api/v1.
+const ACTUATOR_BASE = 'https://poultry-bazar-api.onrender.com';
+async function actuatorFetch(path, retry = true) {
+  const headers = {};
+  if (tokens.access) headers['Authorization'] = 'Bearer ' + tokens.access;
+  const res = await fetch(ACTUATOR_BASE + path, { headers });
+  if (res.status === 401 && retry && tokens.refresh) {
+    const ok = await refreshOnce();
+    if (ok) return actuatorFetch(path, false);
+    goToLogin();
+    throw new Error('সেশনের মেয়াদ শেষ হয়ে গেছে, আবার লগইন করুন');
+  }
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+function metricValue(data) {
+  const m = data && data.measurements && data.measurements[0];
+  return m ? m.value : null;
+}
+function fmtMB(bytes) {
+  if (bytes == null || bytes < 0) return 'সীমাহীন';
+  return Math.round(bytes / 1048576) + ' MB';
+}
+async function loadDiagnostics() {
+  const el = document.getElementById('diagnosticsContent');
+  el.innerHTML = '<div class="loading">লোড হচ্ছে…</div>';
+  try {
+    const [heapUsed, heapMax, nonHeapUsed, nonHeapMax, metaUsed, metaMax, threadsLive, threadsPeak, classesLoaded] =
+      await Promise.all([
+        actuatorFetch('/actuator/metrics/jvm.memory.used?tag=area:heap'),
+        actuatorFetch('/actuator/metrics/jvm.memory.max?tag=area:heap'),
+        actuatorFetch('/actuator/metrics/jvm.memory.used?tag=area:nonheap'),
+        actuatorFetch('/actuator/metrics/jvm.memory.max?tag=area:nonheap'),
+        actuatorFetch('/actuator/metrics/jvm.memory.used?tag=id:Metaspace'),
+        actuatorFetch('/actuator/metrics/jvm.memory.max?tag=id:Metaspace'),
+        actuatorFetch('/actuator/metrics/jvm.threads.live'),
+        actuatorFetch('/actuator/metrics/jvm.threads.peak'),
+        actuatorFetch('/actuator/metrics/jvm.classes.loaded'),
+      ]);
+    const stats = [
+      [fmtMB(metricValue(heapUsed)), 'Heap ব্যবহৃত'],
+      [fmtMB(metricValue(heapMax)), 'Heap সর্বোচ্চ (-Xmx)'],
+      [fmtMB(metricValue(nonHeapUsed)), 'Non-heap ব্যবহৃত'],
+      [fmtMB(metricValue(nonHeapMax)), 'Non-heap সর্বোচ্চ'],
+      [fmtMB(metricValue(metaUsed)), 'Metaspace ব্যবহৃত'],
+      [fmtMB(metricValue(metaMax)), 'Metaspace সর্বোচ্চ'],
+      [metricValue(threadsLive) ?? '—', 'লাইভ থ্রেড'],
+      [metricValue(threadsPeak) ?? '—', 'সর্বোচ্চ থ্রেড (peak)'],
+      [metricValue(classesLoaded) ?? '—', 'লোড করা ক্লাস'],
+    ];
+    let html = '<div class="stat-grid">';
+    for (const [v, label] of stats) {
+      html += `<div class="stat-card"><div class="n">${v}</div><div class="l">${label}</div></div>`;
+    }
+    html += '</div><div class="card"><div style="font-size:12.5px;color:var(--muted);">শেষ রিফ্রেশ: ' +
+      new Date().toLocaleTimeString('bn-BD') + '</div></div>';
+    el.innerHTML = html;
+  } catch (err) {
+    el.innerHTML = '<div class="error-box">' + escapeHtml(err.message) + '</div>';
+  }
+}
+document.getElementById('diagnosticsRefreshBtn').addEventListener('click', loadDiagnostics);
 
 // ---------------- Boot ----------------
 if (tokens.access) { goToApp(); } else { goToLogin(); }
