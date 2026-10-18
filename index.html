@@ -82,6 +82,9 @@
     padding: 8px 0;
     font-size: 13.5px;
     display: none;
+    position: sticky;
+    top: 62px;
+    z-index: 19;
   }
   .notice-bar.show { display: block; }
   .notice-bar .track { display: inline-block; padding-left: 100%; }
@@ -111,7 +114,7 @@
   .subcat-item .label { font-size: 11.5px; margin-top: 4px; line-height: 1.2; max-height: 2.4em; overflow: hidden; }
 
   /* ---------- Search bar ---------- */
-  .search-bar-wrap { padding: 0 12px 8px; position: sticky; top: 62px; background: var(--bg); z-index: 15; }
+  .search-bar-wrap { padding: 0 12px 8px; position: sticky; top: calc(62px + var(--notice-h, 0px)); background: var(--bg); z-index: 15; }
   .search-fake {
     background: #fff; border: 1px solid var(--border); border-radius: 14px;
     padding: 12px 14px; display: flex; align-items: center; gap: 10px; color: #7a8079; font-size: 14px;
@@ -943,10 +946,17 @@ async function loadNotices() {
     const bar = document.getElementById('noticeBar');
     const track = document.getElementById('noticeTrack');
     const msgs = notices.map(n => n.message).filter(Boolean);
-    if (!msgs.length) { bar.classList.remove('show'); return; }
+    if (!msgs.length) {
+      bar.classList.remove('show');
+      document.documentElement.style.setProperty('--notice-h', '0px');
+      return;
+    }
     const joined = msgs.join('        •        ');
     track.textContent = joined + '        •        ' + joined;
     bar.classList.add('show');
+    // search-bar-wrap's sticky offset reads --notice-h so it docks right below this bar
+    // instead of overlapping it; measured (not hardcoded) since the bar's height can vary.
+    document.documentElement.style.setProperty('--notice-h', bar.offsetHeight + 'px');
     let offset = 0;
     const half = () => track.scrollWidth / 2;
     setInterval(() => {
@@ -1209,6 +1219,7 @@ function renderAdDetail(ad) {
       <div class="spec-row"><span class="icon">❤️</span><span class="label">অবস্থা</span><span class="value">${ad.healthStatus === 'HEALTHY' ? 'সুস্থ' : 'অসুস্থ'}</span></div>
       <div class="spec-row"><span class="icon">📍</span><span class="label">লোকেশন</span><span class="value">${escapeHtml(locFull)}</span></div>
       <div class="spec-row"><span class="icon">🕐</span><span class="label">সময়</span><span class="value">${formatRelativeTime(published)}</span></div>
+      ${ad.viewCount > 0 ? `<div class="spec-row"><span class="icon">👁️</span><span class="label">ভিউ</span><span class="value">${formatCount(ad.viewCount)}</span></div>` : ''}
       <div class="countdown-box">ℹ️ ${formatEndsIn(ad.remainingSeconds)}</div>
       ${!sold ? `<a class="btn-call-bottom" href="${telHref}" style="display:block;text-align:center;text-decoration:none;">📞 কল করুন</a>` : ''}
       <a class="report-link" href="#" id="reportLink">🚩 এই বিজ্ঞাপনটি রিপোর্ট করুন</a>
