@@ -1,0 +1,32 @@
+User-agent: *
+# This site's real pages live under hash routes (e.g. /#/login), which
+# are never requested from the server, so a crawler never needs these
+# literal paths. These are stale URLs Search Console flagged as 404s -
+# left over from an earlier version of the site.
+Disallow: /login
+Disallow: /register
+Disallow: /otp
+Disallow: /forgot
+Disallow: /reset
+Disallow: /me
+Disallow: /me/ads
+Disallow: /me/password
+Disallow: /me/feedback
+Disallow: /sell
+Disallow: /sell/success
+Disallow: /search
+Disallow: /ads
+Disallow: /ads/
+Disallow: /feedback
+Disallow: /notices
+Disallow: /banners
+Disallow: /categories
+Disallow: /locations/divisions
+Disallow: /media/presign
+Disallow: /auth/login
+Disallow: /auth/logout
+Disallow: /auth/registration/start
+Disallow: /auth/registration/verify
+Disallow: /auth/password-reset/start
+Disallow: /auth/password-reset/verify
+Disallow: /auth/password-reset/complete

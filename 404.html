@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Poultry BAZAR</title>
+<script>
+  // This site is a single-page app that routes through the URL hash
+  // (e.g. /#/login), so GitHub Pages has no real file for a path like
+  // /login - it serves this 404 page instead. Turn the requested path
+  // into the equivalent hash route and send the browser to the real
+  // index.html, which already knows how to show that route (falls back
+  // to the home page itself if the route no longer exists).
+  var path = location.pathname.replace(/\/+$/, '') || '/';
+  location.replace('/#' + path + location.search);
+</script>
+</head>
+<body></body>
+</html>

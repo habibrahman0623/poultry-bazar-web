@@ -126,13 +126,13 @@
   .section-header button { background: none; border: none; color: var(--green); font-weight: 600; font-size: 13.5px; }
 
   /* ---------- Ad grid ---------- */
-  .ad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 6px 12px 20px; }
-  @media (min-width: 640px) { .ad-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (min-width: 960px) { .ad-grid { grid-template-columns: repeat(4, 1fr); } }
-  .ad-card { background: #fff; border-radius: 16px; overflow: hidden; display: block; }
-  .ad-card .img-wrap { position: relative; aspect-ratio: 1.25; background: #eceee9; }
-  .ad-card .img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .ad-card .placeholder-img { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 34px; color: #b7bcb5; }
+  .listing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 6px 12px 20px; }
+  @media (min-width: 640px) { .listing-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 960px) { .listing-grid { grid-template-columns: repeat(4, 1fr); } }
+  .listing-card { background: #fff; border-radius: 16px; overflow: hidden; display: block; }
+  .listing-card .img-wrap { position: relative; aspect-ratio: 1.25; background: #eceee9; }
+  .listing-card .img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .listing-card .placeholder-img { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 34px; color: #b7bcb5; }
   .pill { position: absolute; background: rgba(255,255,255,.92); border-radius: 999px; padding: 3px 9px; font-size: 11px; font-weight: 600; }
   .pill.code { top: 6px; left: 6px; color: var(--green); }
   .pill.time { bottom: 6px; right: 6px; color: var(--ink); }
@@ -146,11 +146,11 @@
     background: rgba(27,27,27,.78); color: #fff; padding: 3px 10px; border-radius: 6px;
     font-size: 10.5px; font-weight: 700; white-space: nowrap;
   }
-  .ad-card.sold { opacity: .62; }
-  .ad-card .body { padding: 8px 10px 10px; }
-  .ad-card .cat-label { font-weight: 700; font-size: 13.5px; margin-bottom: 3px; }
-  .ad-card .kv { font-size: 11.5px; color: #4a4f47; line-height: 1.5; }
-  .ad-card .loc-row { font-size: 11.5px; color: #4a4f47; margin-top: 3px; display: flex; gap: 3px; align-items: flex-start; }
+  .listing-card.sold { opacity: .62; }
+  .listing-card .body { padding: 8px 10px 10px; }
+  .listing-card .cat-label { font-weight: 700; font-size: 13.5px; margin-bottom: 3px; }
+  .listing-card .kv { font-size: 11.5px; color: #4a4f47; line-height: 1.5; }
+  .listing-card .loc-row { font-size: 11.5px; color: #4a4f47; margin-top: 3px; display: flex; gap: 3px; align-items: flex-start; }
 
   /* ---------- Sell bottom bar ---------- */
   .sell-bar {
@@ -394,7 +394,7 @@
     <button id="clearFilterBtn" style="display:none;">সব দেখুন</button>
   </div>
 
-  <div class="ad-grid" id="homeGrid"></div>
+  <div class="listing-grid" id="homeGrid"></div>
   <div id="homeLoadMore" class="loading" style="display:none;"><span class="spinner"></span></div>
   <div id="homeEmpty" class="empty" style="display:none;">কোনো বিজ্ঞাপন পাওয়া যায়নি</div>
 </div>
@@ -437,7 +437,7 @@
 
   <div id="searchResultsWrap" style="display:none;">
     <div class="change-filters-row" id="changeFiltersBtn">🎛 ফিল্টার পরিবর্তন করুন</div>
-    <div class="ad-grid" id="searchGrid"></div>
+    <div class="listing-grid" id="searchGrid"></div>
     <div id="searchLoadMore" class="loading" style="display:none;"><span class="spinner"></span></div>
     <div id="searchEmpty" class="empty" style="display:none;">কোনো বিজ্ঞাপন পাওয়া যায়নি</div>
   </div>
@@ -1012,9 +1012,9 @@ function adCardHtml(ad) {
       <div class="loc-row">📍 ${escapeHtml(locText)}</div>
     </div>`;
   if (sold) {
-    return `<div class="ad-card sold">${inner}</div>`;
+    return `<div class="listing-card sold">${inner}</div>`;
   }
-  return `<a class="ad-card" href="#/ads/${encodeURIComponent(ad.adCode)}">${inner}</a>`;
+  return `<a class="listing-card" href="#/ads/${encodeURIComponent(ad.adCode)}">${inner}</a>`;
 }
 
 // ---------------- Home feed ----------------
